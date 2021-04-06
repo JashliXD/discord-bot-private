@@ -1,0 +1,26 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "description": "just a discord bot",
+  "main": "main.js",
+  "scripts": {
+    "test": "!guild [name]"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JashliXD/discord-bot.git"
+  },
+  "keywords": [
+    "none"
+  ],
+  "author": "JashliXD",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JashliXD/discord-bot/issues"
+  },
+  "homepage": "https://github.com/JashliXD/discord-bot#readme",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "request": "^2.88.2"
+  }
+}
