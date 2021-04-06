@@ -2,11 +2,14 @@
 const request = require('request');
 const discord = require('discord.js');
 const client = new discord.Client();
-const config = require('./config.json')
+//const config = require('./config.json')
 
 
-let api = config.api;
-let token = config.token;
+//let api = config.api;
+//let token = config.token;
+
+let api = process.env.api
+let token = process.env.token
 let prefix = '!';
 
 function unixtodate(unix){
