@@ -8,9 +8,11 @@ const client = new discord.Client();
 //let api = config.api;
 //let token = config.token;
 
-let api = process.env.api
+let api = process.env.api 
 let token = process.env.token
+
 let prefix = '!';
+let jokeapi = 'https://icanhazdadjoke.com/'
 
 function unixtodate(unix){
 	var date = new Date(unix);
@@ -221,9 +223,17 @@ client.on('message', msg =>{
 				})
 			}
 		})
+	} else if (command == 'dadjoke') {
+		request({
+			method: 'GET',
+			url: jokeapi,
+			json: true
+		}, (err, req, body) => {
+			msg.channel.send(body.joke)
+		})
 	} else {
 		if (msg.content.startsWith(prefix)){
-			msg.channel.send("No command found")
+			console.log(msg)
 		}
 	}
 })
