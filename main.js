@@ -8,14 +8,6 @@ const client = new discord.Client();
 //let token = config.token;
 //let ownerID = config.ownerID
 
-app.get('/', (req,res) => {
-	res.send('hello world')
-})
-
-app.listen(port, () => {
-  console.log(`Listening to web`)
-})
-
 let ownerID = process.env.owner
 let api = process.env.api 
 let token = process.env.token
