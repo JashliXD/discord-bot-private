@@ -2,11 +2,7 @@
 const request = require('request');
 const discord = require('discord.js');
 const client = new discord.Client();
-const express = require('express')
-const app = express()
-const port = 3000
 //const config = require('./config.json')
-// link = https://discord.com/api/oauth2/authorize?client_id=799179572108853279&permissions=7168&scope=bot
 
 //let api = config.api;
 //let token = config.token;
