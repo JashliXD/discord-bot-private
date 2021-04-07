@@ -7,12 +7,15 @@ const client = new discord.Client();
 
 //let api = config.api;
 //let token = config.token;
+//let ownerID = config.ownerID
 
+let ownerID = process.env.owner
 let api = process.env.api 
 let token = process.env.token
 
-let prefix = '!';
+let prefix = '?';
 let jokeapi = 'https://icanhazdadjoke.com/'
+let c = 'bot-commands'
 
 function unixtodate(unix){
 	var date = new Date(unix);
@@ -20,6 +23,13 @@ function unixtodate(unix){
 	var dates = date.toLocaleDateString()
 	var extended = dates +' '+ time
 	return extended
+}
+function filter(msg,channel){
+	if (msg.channel.name == channel){
+		return true
+	} else {
+		return false
+	}
 }
 
 client.on('ready', ()=>{
@@ -38,6 +48,7 @@ function isCommand(string){
 client.on('message', msg =>{
 	const command = isCommand(msg.content)
 	const messages = msg.content
+	const owner = msg.author.id
 	if (command == 'ping'){
 		const EmbedText = new discord.MessageEmbed()
 			.setTitle('Honk')
@@ -52,7 +63,10 @@ client.on('message', msg =>{
 			msg.channel.send('You forgot to add a name. Example: !uuid [NAME/PLAYER]')
 			return;
 		}
-
+		if (filter(msg,'bot-commands') == false) {
+			msg.channel.send("You can't use commands here.")
+			return;
+		}
 		request({
 			method: 'GET',
 			url: 'https://api.mojang.com/users/profiles/minecraft/'+name,
@@ -70,6 +84,10 @@ client.on('message', msg =>{
 		})
 	} else if (command == 'guild'){
 		const guilds = messages.substr(messages.toLowerCase().indexOf('guild') + 6)
+		if (filter(msg, c) == false) {
+			msg.channel.send("You can't use commands here.")
+			return;
+		}
 		if (guilds == ''){
 			msg.channel.send('You forgot to add a name. Example: !guild [GUILDNAME]')
 			return;
@@ -118,12 +136,14 @@ client.on('message', msg =>{
 		})
 	} else if (command == 'status'){
 		const name = messages.substr(messages.toLowerCase().indexOf('status') + 7)
-		//console.log(msg)
+		if (filter(msg,c) == false) {
+			msg.channel.send("You can't use commands here.")
+			return;
+		}
 		if (name == '') {
 			msg.channel.send('You forgot to add a name. Example: !status [PLAYER/NAME]')
 			return;
 		}
-
 		request({
 			method: 'GET',
 			url: 'https://api.mojang.com/users/profiles/minecraft/' + name,
@@ -144,7 +164,7 @@ client.on('message', msg =>{
 						return
 					} else {
 						if (bodys.session.online == false){
-							msg.channel.send("Sorry, this player is kinda Offline")
+							msg.channel.send("Sorry, this player is Offline")
 						} else if (bodys.session.online) {
 							const embed = new discord.MessageEmbed()
 								.setTitle("Player Activity")
@@ -162,10 +182,14 @@ client.on('message', msg =>{
 		msg.channel.send("Congratulations, You've made "+mathsthing+ "M today.")
 	} else if (command == 'prefix'){
 		const newprefix = messages.substr(messages.toLowerCase().indexOf('prefix') + 7);
+		if (owner != ownerID){
+			msg.channel.send("Sorry, you don't have permission to use this command")
+			return
+		}
 		if (newprefix == ''){
 			msg.channel.send("You forgot to add the prefix. Example: !prefix '?'")
+			return
 		}
-
 		prefix = newprefix
 		msg.channel.send(`New prefix is now [${newprefix}]`)
 	} else if (command == 'help'){
@@ -176,6 +200,10 @@ client.on('message', msg =>{
 		msg.channel.send(embed)
 	} else if (command == 'history'){
 		const name = messages.substr(messages.toLowerCase().indexOf('history') + 8)
+		if (filter(msg,c) == false) {
+			msg.channel.send("You can't use commands here.")
+			return;
+		}
 		if (name == ''){
 			msg.channel.send("You forgot to add the name. Example: !history [NAME]")
 			return
@@ -224,6 +252,7 @@ client.on('message', msg =>{
 			}
 		})
 	} else if (command == 'dadjoke') {
+		console.log(msg)
 		request({
 			method: 'GET',
 			url: jokeapi,
@@ -231,10 +260,19 @@ client.on('message', msg =>{
 		}, (err, req, body) => {
 			msg.channel.send(body.joke)
 		})
-	} else {
-		if (msg.content.startsWith(prefix)){
-			console.log(msg)
+	} else if (command == 'channel') {
+		const name = messages.substr(messages.toLowerCase().indexOf('channel') + 8)
+		if (owner != ownerID){
+			msg.channel.send("Sorry, you don't have permission to use this command")
+			return
 		}
+		if (name == ''){
+			msg.channel.send("You forgot to add the name. Example: !channel [NAME]")
+			return
+		}
+
+		c = name
+		msg.channel.send("Filter changed")
 	}
 })
 
