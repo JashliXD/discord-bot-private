@@ -21,6 +21,7 @@
   "homepage": "https://github.com/JashliXD/discord-bot#readme",
   "dependencies": {
     "discord.js": "^12.5.3",
+    "discord.js-pagination": "^1.0.3",
     "express": "^4.17.1",
     "request": "^2.88.2"
   }

@@ -31,6 +31,14 @@ function filter(msg,channel){
 	}
 }
 
+function empty(array){
+	if(array.length == 0){
+		return "No More :frowning:"
+	} else {
+		return array
+	}
+}
+
 client.on('ready', ()=>{
 	console.log(`Discord bot: ${client.user.tag}`)
 });
@@ -59,7 +67,7 @@ client.on('message', msg =>{
 		const name = messages.substr(messages.toLowerCase().indexOf('uuid') + 5)
 
 		if (name == ''){
-			msg.channel.send('You forgot to add a name. Example: !uuid [NAME/PLAYER]')
+			msg.channel.send(`You forgot to add a name. Example: ${prefix}uuid [NAME/PLAYER]`)
 			return;
 		}
 		if (filter(msg,'bot-commands') == false) {
@@ -88,7 +96,7 @@ client.on('message', msg =>{
 			return;
 		}
 		if (guilds == ''){
-			msg.channel.send('You forgot to add a name. Example: !guild [GUILDNAME]')
+			msg.channel.send(`You forgot to add a name. Example: ${prefix}guild [GUILDNAME]`)
 			return;
 		}
 		request({
@@ -103,7 +111,7 @@ client.on('message', msg =>{
 				msg.channel.send("Undefined guild")
 			}else {
 				let timestamp = body.guild.created;
-				let allplayers = []
+				let players = []
 				var i
 				if (body.guild == null){
 					msg.channel.send("Undefined guild")
@@ -118,12 +126,14 @@ client.on('message', msg =>{
 								json: true
 							}, (err,req,bodys) => {
 								let getlength = bodys.length
-								allplayers.push("Player: "+bodys[getlength - 1].name + ' Rank: ' + rank +'\n')
-								if (newi == body.guild.members.length - 1){
+								players.push("Player: **"+bodys[getlength - 1].name + '**   Rank: ' + rank +'\n')
+								if (newi == body.guild.members.length - 1 || newi == 14){
 									const embed = new discord.MessageEmbed()
-										.setTitle("GUILD status")
+										.setTitle("GUILD PLAYER")
 										.setColor(0x000ff)
-										.setDescription("Created: "+unixtodate(timestamp)+"\n" +allplayers)
+										.setDescription("Created: "+unixtodate(timestamp)+"\n"+"Only 15 or more players max to see"+"\n"+empty(players))
+										.setFooter("Jashli Bot")
+
 									msg.channel.send(embed)
 								}
 								
@@ -140,7 +150,7 @@ client.on('message', msg =>{
 			return;
 		}
 		if (name == '') {
-			msg.channel.send('You forgot to add a name. Example: !status [PLAYER/NAME]')
+			msg.channel.send(`You forgot to add a name. Example: ${prefix}status [PLAYER/NAME]`)
 			return;
 		}
 		request({
@@ -169,7 +179,6 @@ client.on('message', msg =>{
 								.setTitle("Player Activity")
 								.setDescription(bodys.session.gameType)
 							msg.channel.send(embed)
-							console.log(msg.channel.send)
 						}
 					}
 				})
@@ -185,12 +194,20 @@ client.on('message', msg =>{
 			msg.channel.send("Sorry, you don't have permission to use this command")
 			return
 		}
-		if (newprefix == ''){
-			msg.channel.send("You forgot to add the prefix. Example: !prefix '?'")
+		if (newprefix.length != 1){
+			msg.channel.send("Can't man you said only 1 in length")
 			return
 		}
-		prefix = newprefix
-		msg.channel.send(`New prefix is now [${newprefix}]`)
+		if (newprefix == ''){
+			msg.channel.send(`You forgot to add the prefix. Example: ${prefix}prefix '?'`)
+			return
+		}
+		if (newprefix == '!' || newprefix == '?' || newprefix == '.' || newprefix == '/' || newprefix == '$' || newprefix == '-'){
+			prefix = newprefix
+			msg.channel.send(`New prefix is now [${newprefix}]`)
+		} else {
+			msg.channel.send('Your input is not in my database')
+		}
 	} else if (command == 'help'){
 		const embed = new discord.MessageEmbed()
 			.setTitle("List of my Commands")
@@ -204,7 +221,7 @@ client.on('message', msg =>{
 			return;
 		}
 		if (name == ''){
-			msg.channel.send("You forgot to add the name. Example: !history [NAME]")
+			msg.channel.send(`You forgot to add the name. Example: ${prefix}history [NAME]`)
 			return
 		}
 		request({
@@ -250,8 +267,7 @@ client.on('message', msg =>{
 				})
 			}
 		})
-	} else if (command == 'dadjoke') {
-		console.log(msg)
+	} else if (command == 'joke') {
 		request({
 			method: 'GET',
 			url: jokeapi,
@@ -266,12 +282,33 @@ client.on('message', msg =>{
 			return
 		}
 		if (name == ''){
-			msg.channel.send("You forgot to add the name. Example: !channel [NAME]")
+			msg.channel.send(`You forgot to add the name. Example: ${prefix}channel [NAME]`)
 			return
 		}
 
 		c = name
 		msg.channel.send("Filter changed")
+	} else if (msg.content == 'I love you'){
+		msg.react('❤️')
+	} else if (command == 'poll'){
+		const string = messages.substr(messages.toLowerCase().indexOf('poll') + 5)
+		if (string == ''){
+			msg.channel.send(`You forgot to add a text. Example: ${prefix}poll`)
+			return
+		}
+		let array = string.split(',')
+		if (array.length != 2){
+			msg.channel.send("My max poll is only 2 :frowning:")
+			return
+		}
+
+
+		let emoji = ["👍", "👎"] // for two
+
+		const embed =new discord.MessageEmbed()
+			.setTitle('Vote here')
+			.setDescription(emoji[0]+' '+array[0]+ '\n\n'+ emoji[1] +' ' + array[1])
+		msg.channel.send(embed).then(sentMessage => {sentMessage.react(emoji[0]).then(()=> {sentMessage.react(emoji[1])})})
 	}
 })
 
