@@ -190,6 +190,7 @@ client.on('message', msg =>{
 		msg.channel.send("Congratulations, You've made "+mathsthing+ "M today.")
 	} else if (command == 'prefix'){
 		const newprefix = messages.substr(messages.toLowerCase().indexOf('prefix') + 7);
+		console.log("Someone is trying to change prefix. Their ID: "+msg.author.id)
 		if (owner != ownerID){
 			msg.channel.send("Sorry, you don't have permission to use this command")
 			return
@@ -212,7 +213,8 @@ client.on('message', msg =>{
 		const embed = new discord.MessageEmbed()
 			.setTitle("List of my Commands")
 			.setColor(0x000ff)
-			.setDescription(`${prefix}help\n${prefix}uuid\n${prefix}guild\n${prefix}status\n${prefix}history`)
+			.setDescription(`${prefix}help\n${prefix}uuid\n${prefix}guild\n${prefix}status\n${prefix}history\n${prefix}`)
+			.setFooter('Made by Jashwi')
 		msg.channel.send(embed)
 	} else if (command == 'history'){
 		const name = messages.substr(messages.toLowerCase().indexOf('history') + 8)
@@ -260,6 +262,7 @@ client.on('message', msg =>{
 								const embed = new discord.MessageEmbed()
 									.setTitle("Name history of "+name)
 									.setDescription(playerName)
+									.setFooter('Made by Jashwi')
 								msg.channel.send(embed)
 							}
 						}
@@ -297,18 +300,47 @@ client.on('message', msg =>{
 			return
 		}
 		let array = string.split(',')
-		if (array.length != 2){
-			msg.channel.send("My max poll is only 2 :frowning:")
+		if (array.length == 1 || array.length >=8){
+			if (array.length >=8){
+				msg.channel.send(":frowning: No, that was too many")
+			}
+			if (array.length == 1){
+				msg.channel.send(":frowning: No, that was only 1. It should be more than 1")
+			}
 			return
 		}
 
 
 		let emoji = ["👍", "👎"] // for two
+		let emojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬']
+		if (array.length == 2){
+			const embed =new discord.MessageEmbed()
+				.setTitle('Vote here')
+				.setDescription(emoji[0]+' '+array[0]+ '\n\n'+ emoji[1] +' ' + array[1])
+				.setFooter('Made by Jashwi')
+			msg.channel.send(embed).then(sentMessage => {sentMessage.react(emoji[0]).then(()=> {sentMessage.react(emoji[1])})})
+		} else {
+			let pushed = []
+			var i
+			var newi
+			for (i in array){
+				pushed.push(emojis[i]+' '+array[i]+ '\n')
+				newi = i
+				if (newi == array.length - 1){
+					const embed = new discord.MessageEmbed()
+						.setTitle('Vote here')
+						.setDescription(pushed)
+						.setFooter('Made by Jashwi')
 
-		const embed =new discord.MessageEmbed()
-			.setTitle('Vote here')
-			.setDescription(emoji[0]+' '+array[0]+ '\n\n'+ emoji[1] +' ' + array[1])
-		msg.channel.send(embed).then(sentMessage => {sentMessage.react(emoji[0]).then(()=> {sentMessage.react(emoji[1])})})
+					msg.channel.send(embed).then(sentMessage=> {
+						var l;
+						for (l in array){
+							sentMessage.react(emojis[l])
+						}
+					})
+				}
+			}
+		}
 	}
 })
 
