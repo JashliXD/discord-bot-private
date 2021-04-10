@@ -8,7 +8,7 @@ const client = new discord.Client();
 //let token = config.token;
 //let ownerID = config.ownerID
 
-let ownerID = process.env.owner
+let ownerID = process.env.ownerID
 let api = process.env.api 
 let token = process.env.token
 
