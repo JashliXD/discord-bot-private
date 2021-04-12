@@ -2,15 +2,15 @@
 const request = require('request');
 const discord = require('discord.js');
 const client = new discord.Client();
-//const config = require('./config.json')
+const config = require('./config.json')
 
-//let api = config.api;
-//let token = config.token;
-//let ownerID = config.ownerID
+let api = config.api;
+let token = config.token;
+let ownerID = config.ownerID
 
-let ownerID = process.env.ownerID
-let api = process.env.api 
-let token = process.env.token
+//let ownerID = process.env.ownerID
+//let api = process.env.api 
+//let token = process.env.token
 
 let prefix = '?';
 let jokeapi = 'https://icanhazdadjoke.com/'
@@ -300,12 +300,12 @@ client.on('message', msg =>{
 			return
 		}
 		let array = string.split(',')
-		if (array.length == 1 || array.length >=8){
-			if (array.length >=8){
+		if (array.length == 1 || array.length >=9){
+			if (array.length >=9){
 				msg.channel.send(":frowning: No, that was too many")
 			}
-			if (array.length == 1){
-				msg.channel.send(":frowning: No, that was only 1. It should be more than 1")
+			if (array.length <= 2){
+				msg.channel.send(":frowning: No, that was only 2. It should be more than 2")
 			}
 			return
 		}
@@ -313,29 +313,32 @@ client.on('message', msg =>{
 
 		let emoji = ["👍", "👎"] // for two
 		let emojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬']
-		if (array.length == 2){
+		if (array.length == 3){
 			const embed =new discord.MessageEmbed()
-				.setTitle('Vote here')
-				.setDescription(emoji[0]+' '+array[0]+ '\n\n'+ emoji[1] +' ' + array[1])
+				.setTitle(array[0])
+				.setDescription(emoji[0]+' '+array[1]+ '\n\n'+ emoji[1] +' ' + array[2])
 				.setFooter('Made by Jashwi')
 			msg.channel.send(embed).then(sentMessage => {sentMessage.react(emoji[0]).then(()=> {sentMessage.react(emoji[1])})})
 		} else {
 			let pushed = []
+			let Title = array[0]
 			var i
 			var newi
+			var l = i + 1
 			for (i in array){
+				array = array.filter(e => e !== Title)
 				pushed.push(emojis[i]+' '+array[i]+ '\n')
 				newi = i
 				if (newi == array.length - 1){
 					const embed = new discord.MessageEmbed()
-						.setTitle('Vote here')
+						.setTitle(Title)
 						.setDescription(pushed)
 						.setFooter('Made by Jashwi')
 
 					msg.channel.send(embed).then(sentMessage=> {
-						var l;
-						for (l in array){
-							sentMessage.react(emojis[l])
+						var a;
+						for (a in array){
+							sentMessage.react(emojis[a])
 						}
 					})
 				}
