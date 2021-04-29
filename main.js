@@ -6,11 +6,9 @@ const client = new discord.Client();
 
 //let api = config.api;
 //let token = config.token;
-//let ownerID = config.ownerID
+//let ownerID = config.ownerID;
 
-let version = '1.1.6'
-
-let remember = []
+let version = '1.1.7'
 
 let ownerID = process.env.ownerID
 let api = process.env.api 
@@ -19,6 +17,13 @@ let token = process.env.token
 let prefix = '?';
 let jokeapi = 'https://icanhazdadjoke.com/'
 
+
+let url = 'https://waifupictures.000webhostapp.com/waifu/'
+let animelist = ['AkiraKogami.jpg', 'Ayaki.png', 'Chika.jpg', 'Jasmine.jpg', 'Ichika.png', 'KiraraBernstein.jpg', 'Kyouko.jpg', 'Makina_Irisu.png', 'Rem.jpg', 'REMILIA_SCARLET.jpg', 'Shiro.png', 'Yoshino.png']
+let animename = ['Akira Kogami', 'Kamisato Ayaka', 'Chika Fujiwara', 'Jasmine Kashiro', 'Ichika Nakano', 'Kirara Bernstein', 'Kyouko Hori', 'Makina_Irisu', 'Rem', 'Remilia Scarlet', 'Shiro', 'Yoshino Himekawa']
+console.log(animename.length, animelist.length)
+let randomized;
+let randomized2;
 function unixtodate(unix){
 	var date = new Date(unix);
 	var time = date.toLocaleTimeString()
@@ -425,6 +430,14 @@ client.on('message', msg =>{
 			msg.channel.send('Cleared')
 			return
 		}
+	} else if (command == 'waifu'){
+		randomized = Math.floor(Math.random() * animelist.length + 1)
+		randomized2 = Math.floor(Math.random() * 101)
+		const embed = new discord.MessageEmbed()
+			.setTitle('You waifu is '+ animename[randomized])
+			.addField('Cuteness', randomized2+'%')
+			.setImage(url+animelist[randomized])
+		msg.channel.send(embed)
 	}
 })
 
