@@ -371,6 +371,10 @@ client.on('message', msg =>{
 			url: 'https://api.mojang.com/users/profiles/minecraft/'+name,
 			json: true
 		}, (err, req, body) => {
+			if(body == undefined){
+				msg.channel.send("Undefined player")
+				return
+			}
 			uuid = body.id
 			let name_1 = body.name
 			if (com == 'body'){
