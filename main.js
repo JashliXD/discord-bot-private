@@ -399,7 +399,7 @@ client.on('message', msg =>{
 			}
 		})
 	} else if (command == 'version'){
-		send.channel.send(version)
+		msg.channel.send(version)
 	} else if (command == 'remember'){
 		const key = messages.substr(messages.toLowerCase().indexOf('remember') + 9)
 		if (key == ''){
