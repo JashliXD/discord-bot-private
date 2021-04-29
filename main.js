@@ -70,9 +70,9 @@ client.on('message', msg =>{
 	const owner = msg.author.id
 	if (command == 'ping'){
 		const EmbedText = new discord.MessageEmbed()
-			.setTitle('Honk')
+			.setTitle('Meow')
 			.setColor(0xff0000)
-			.setDescription('Honk Honk')
+			.setDescription('Meow Meow')
 		msg.channel.send(EmbedText)
 	} else if (command == 'uuid'){
 
