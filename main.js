@@ -437,6 +437,8 @@ client.on('message', msg =>{
 			.setTitle('You waifu is '+ animename[randomized])
 			.addField('Cuteness', randomized2+'%')
 			.setImage(url+animelist[randomized])
+			.setDescription('Cuteness is just a randomized number')
+			.setFooter('Made by Jashli')
 		msg.channel.send(embed)
 	}
 })
