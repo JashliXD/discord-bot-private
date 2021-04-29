@@ -17,6 +17,8 @@ let token = process.env.token
 let prefix = '?';
 let jokeapi = 'https://icanhazdadjoke.com/'
 
+let remember = []
+
 
 let url = 'https://waifupictures.000webhostapp.com/waifu/'
 let animelist = ['AkiraKogami.jpg', 'Ayaki.png', 'Chika.jpg', 'Jasmine.jpg', 'Ichika.png', 'KiraraBernstein.jpg', 'Kyouko.jpg', 'Makina_Irisu.png', 'Rem.jpg', 'REMILIA_SCARLET.jpg', 'Shiro.png', 'Yoshino.png']
