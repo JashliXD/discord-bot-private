@@ -8,28 +8,25 @@ const client = new discord.Client();
 //let token = config.token;
 //let ownerID = config.ownerID
 
+let version = '1.1.6'
+
+let remember = []
+
 let ownerID = process.env.ownerID
 let api = process.env.api 
 let token = process.env.token
 
 let prefix = '?';
 let jokeapi = 'https://icanhazdadjoke.com/'
-let c = 'bot-commands'
 
 function unixtodate(unix){
 	var date = new Date(unix);
 	var time = date.toLocaleTimeString()
 	var dates = date.toLocaleDateString()
-	var extended = dates +' '+ time
-	return extended
+	var string = dates +' '+ time
+	return string
 }
-function filter(msg,channel){
-	if (msg.channel.name == channel){
-		return true
-	} else {
-		return false
-	}
-}
+
 
 function empty(array){
 	if(array.length == 0){
@@ -39,8 +36,18 @@ function empty(array){
 	}
 }
 
+function isitalic(text){
+	if(text.startsWith('_') && text.endsWith('_')){
+		const str = '\\'+text
+		return str
+	} else {
+		return text
+	}
+}
+
 client.on('ready', ()=>{
 	console.log(`Discord bot: ${client.user.tag}`)
+	client.user.setActivity("I am watching mclaren's pub")
 });
 
 function isCommand(string){
@@ -70,10 +77,6 @@ client.on('message', msg =>{
 			msg.channel.send(`You forgot to add a name. Example: ${prefix}uuid [NAME/PLAYER]`)
 			return;
 		}
-		if (filter(msg,'bot-commands') == false) {
-			msg.channel.send("You can't use commands here.")
-			return;
-		}
 		request({
 			method: 'GET',
 			url: 'https://api.mojang.com/users/profiles/minecraft/'+name,
@@ -91,10 +94,6 @@ client.on('message', msg =>{
 		})
 	} else if (command == 'guild'){
 		const guilds = messages.substr(messages.toLowerCase().indexOf('guild') + 6)
-		if (filter(msg, c) == false) {
-			msg.channel.send("You can't use commands here.")
-			return;
-		}
 		if (guilds == ''){
 			msg.channel.send(`You forgot to add a name. Example: ${prefix}guild [GUILDNAME]`)
 			return;
@@ -126,12 +125,13 @@ client.on('message', msg =>{
 								json: true
 							}, (err,req,bodys) => {
 								let getlength = bodys.length
-								players.push("Player: **"+bodys[getlength - 1].name + '**   Rank: ' + rank +'\n')
+								players.push("Player: "+isitalic(bodys[getlength - 1].name) + ' Rank: ' + rank +'\n')
+								console.log(players)
 								if (newi == body.guild.members.length - 1 || newi == 14){
 									const embed = new discord.MessageEmbed()
 										.setTitle("GUILD PLAYER")
 										.setColor(0x000ff)
-										.setDescription("Created: "+unixtodate(timestamp)+"\n"+"Only 15 or more players max to see"+"\n"+empty(players))
+										.setDescription("Created: "+unixtodate(timestamp)+"\n"+empty(players))
 										.setFooter("Jashli Bot")
 
 									msg.channel.send(embed)
@@ -144,11 +144,10 @@ client.on('message', msg =>{
 			}
 		})
 	} else if (command == 'status'){
-		const name = messages.substr(messages.toLowerCase().indexOf('status') + 7)
-		if (filter(msg,c) == false) {
-			msg.channel.send("You can't use commands here.")
-			return;
-		}
+		let name1 = messages.substr(messages.toLowerCase().indexOf('status') + 7)
+		const name = isitalic(name1)
+		console.log(name)
+		let uuid
 		if (name == '') {
 			msg.channel.send(`You forgot to add a name. Example: ${prefix}status [PLAYER/NAME]`)
 			return;
@@ -162,7 +161,7 @@ client.on('message', msg =>{
 				msg.channel.send('Undefined player')
 				return;
 			} else {
-				let uuid = body.id;
+				uuid = body.id;
 				request({
 					method: 'GET',
 					url: 'https://api.hypixel.net/status?key='+api+'&uuid='+ uuid,
@@ -173,7 +172,12 @@ client.on('message', msg =>{
 						return
 					} else {
 						if (bodys.session.online == false){
-							msg.channel.send("Sorry, this player is Offline")
+							const embed = new discord.MessageEmbed()
+								.setTitle(name)
+								.setURL('https://sky.shiiyu.moe/stats/'+name)
+								.setThumbnail('https://crafatar.com/renders/body/'+uuid)
+								.addField('Online', '🔴')
+							msg.channel.send(embed)
 						} else if (bodys.session.online) {
 							const embed = new discord.MessageEmbed()
 								.setTitle("Player Activity")
@@ -218,10 +222,6 @@ client.on('message', msg =>{
 		msg.channel.send(embed)
 	} else if (command == 'history'){
 		const name = messages.substr(messages.toLowerCase().indexOf('history') + 8)
-		if (filter(msg,c) == false) {
-			msg.channel.send("You can't use commands here.")
-			return;
-		}
 		if (name == ''){
 			msg.channel.send(`You forgot to add the name. Example: ${prefix}history [NAME]`)
 			return
@@ -278,19 +278,6 @@ client.on('message', msg =>{
 		}, (err, req, body) => {
 			msg.channel.send(body.joke)
 		})
-	} else if (command == 'channel') {
-		const name = messages.substr(messages.toLowerCase().indexOf('channel') + 8)
-		if (owner != ownerID){
-			msg.channel.send("Sorry, you don't have permission to use this command")
-			return
-		}
-		if (name == ''){
-			msg.channel.send(`You forgot to add the name. Example: ${prefix}channel [NAME]`)
-			return
-		}
-
-		c = name
-		msg.channel.send("Filter changed")
 	} else if (msg.content == 'I love you'){
 		msg.react('❤️')
 	} else if (command == 'poll'){
@@ -343,6 +330,96 @@ client.on('message', msg =>{
 					})
 				}
 			}
+		}
+	} else if (command == 'player'){
+		const uuid = messages.substr(messages.toLowerCase().indexOf('player') + 7)
+		request({
+			method: 'get',
+			url: 'https://api.mojang.com/user/profiles/'+uuid+'/names',
+			json: true
+		}, (err,req,body) => {
+			if (body == undefined){
+				msg.channel.send('UUID Undefined')
+				return
+			}
+
+			let player = body[body.length - 1].name
+			const embed = new discord.MessageEmbed()
+				.setTitle('Player name')
+				.setDescription(player)
+
+			msg.channel.send(embed)
+		})
+	} else if (command == 'skin'){
+		const commands = messages.substr(messages.toLowerCase().indexOf('skin') + 5)
+		let issplitted = commands.split(' ')
+
+		const name = issplitted[1]
+		const com = issplitted[0].toLowerCase()
+		let uuid
+
+		if (name == ''){
+			msg.channel.send('You forgot the add the name')
+			return
+		}
+		if (com == ''){
+			msg.channel.send(`Command not found try ${prefix}skin [body, head, steal, avatar] [IGN]`)
+			return
+		}
+		request({
+			method: 'GET',
+			url: 'https://api.mojang.com/users/profiles/minecraft/'+name,
+			json: true
+		}, (err, req, body) => {
+			uuid = body.id
+			let name_1 = body.name
+			if (com == 'body'){
+				const embed = new discord.MessageEmbed()
+					.setTitle('Skin from '+name_1)
+					.setImage('https://crafatar.com/renders/body/'+uuid)
+				msg.channel.send(embed)
+			} else if (com == 'steal'){
+				const embed = new discord.MessageEmbed()
+					.setTitle('Skin from '+name)
+					.setImage('https://crafatar.com/skins/'+uuid)
+				msg.channel.send(embed)
+			}else if (com == 'head'){
+				const embed = new discord.MessageEmbed()
+					.setTitle('Skin from '+name)
+					.setImage('https://crafatar.com/renders/head/'+uuid)
+				msg.channel.send(embed)
+
+			}else if(com == 'avatar'){
+				const embed = new discord.MessageEmbed()
+					.setTitle('Skin from '+name)
+					.setImage('https://crafatar.com/avatars/'+uuid)
+				msg.channel.send(embed)
+			} else {
+				msg.channel.send('Unknown command')
+			}
+		})
+	} else if (command == 'version'){
+		send.channel.send(version)
+	} else if (command == 'remember'){
+		const key = messages.substr(messages.toLowerCase().indexOf('remember') + 9)
+		if (key == ''){
+			return
+		}
+
+		remember.push(key)
+		msg.channel.send('Added to database')
+	} else if (command == 'database'){
+		const clear = messages.substr(messages.toLowerCase().indexOf('database') + 9)
+		if (clear == ''){
+			if (remember == ''){
+				msg.channel.send('None')
+			} else {
+				msg.channel.send(remember)
+			}
+		} else if ('clear'){
+			remember = []
+			msg.channel.send('Cleared')
+			return
 		}
 	}
 })
