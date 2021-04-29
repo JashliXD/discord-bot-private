@@ -436,7 +436,7 @@ client.on('message', msg =>{
 		randomized = Math.floor(Math.random() * animelist.length + 1)
 		randomized2 = Math.floor(Math.random() * 101)
 		const embed = new discord.MessageEmbed()
-			.setTitle('You waifu is '+ animename[randomized])
+			.setTitle('Your waifu is '+ animename[randomized])
 			.addField('Cuteness', randomized2+'%')
 			.setImage(url+animelist[randomized])
 			.setDescription('Cuteness is just a randomized number')
