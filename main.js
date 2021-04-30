@@ -7,7 +7,8 @@ const client = new discord.Client();
 //let api = config.api;
 //let token = config.token;
 //let ownerID = config.ownerID
-let swearList = ['fuck','nigga','nigger','fuk','jackass','idiot','idiut','jackas'] // To delete message with
+let swearList = ['fuck','nigga','nigger','fuk','jackass','idiot','idiut','jackas','fuck you','fu\'ck', 'f\'uck','motherfucker','you son of a bitch','asshole', 'dickhead'] // To delete message with
+let sweardetection = ["Please stop swearing", "Swear Detected", "Don't swear", "Batō o yamete kudasai"]
 let ezlist = ["Wait... This isn't what I typed!","Anyone else really like Rick Astley?","Hey helper, how play game?", "Sometimes I sing soppy, love songs in the car.","I like long walks on the beach and playing Hypixel","Please go easy on me, this is my first game!","You're a great person! Do you want to play some Hypixel games with me?","In my free time I like to watch cat videos on Youtube", "When I saw the witch with the potion, I knew there was trouble brewing.", "If the Minecraft world is infinite, how does the sun revolve around it?","Hello everyone! I am an innocent player who loves everything Hypixel.","Plz give me doggo memes!"]
 let version = '1.1.7'
 
@@ -28,6 +29,7 @@ console.log(animename.length, animelist.length)
 let randomized;
 let randomized2;
 let randomhypixel;
+let randomsweardetect;
 function unixtodate(unix){
 	var date = new Date(unix);
 	var time = date.toLocaleTimeString()
@@ -72,10 +74,13 @@ client.on('message', msg =>{
 	const command = isCommand(msg.content)
 	const messages = msg.content
 	const owner = msg.author.id
-	if (swearList.some(word => msg.content.includes(word))){
-		let words = swearList.some(word => msg.content.includes(word))
-		msg.channel.send('Swear detected',words)
-		msg.delete()
+	if (swearList.some(word => msg.content.includes(word.toLowerCase()))){
+		randomsweardetect = Math.floor(Math.random() * sweardetection.length)
+		msg.channel.send(sweardetection[randomsweardetect])
+		setTimeout(()=>{
+			msg.delete()
+			return
+		},5000)
 	}else if (msg.content == 'ez'){
 		randomhypixel = Math.floor(Math.random() * ezlist.length)
 		msg.delete()
