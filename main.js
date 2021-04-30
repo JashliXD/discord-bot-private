@@ -8,7 +8,7 @@ const client = new discord.Client();
 //let token = config.token;
 //let ownerID = config.ownerID
 
-// comments
+// commentss
 
 let swearList = ['fuck','nigga','nigger','fuk','jackass','idiot','idiut','jackas','fuck you','fu\'ck', 'f\'uck','motherfucker','you son of a bitch','asshole', 'dickhead'] // To delete message with
 let sweardetection = ["Please stop swearing", "Swear Detected", "Don't swear", "Batō o yamete kudasai", "Yamate"]
