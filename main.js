@@ -10,7 +10,7 @@ const client = new discord.Client();
 
 let swearList = ['fuck','nigga','nigger','fuk','jackass','idiot','idiut','jackas','fuck you','fu\'ck', 'f\'uck','motherfucker','you son of a bitch','asshole', 'dickhead'] // To delete message with
 let sweardetection = ["Please stop swearing", "Swear Detected", "Don't swear", "Batō o yamete kudasai", "Yamate"]
-let ezlist = ["Wait... This isn't what I typed!","Anyone else really like Rick Astley?","Hey helper, how play game?", "Sometimes I sing soppy, love songs in the car.","I like long walks on the beach and playing Hypixel","Please go easy on me, this is my first game!","You're a great person! Do you want to play some Hypixel games with me?","In my free time I like to watch cat videos on Youtube", "When I saw the witch with the potion, I knew there was trouble brewing.", "If the Minecraft world is infinite, how does the sun revolve around it?","Hello everyone! I am an innocent player who loves everything Hypixel.","Plz give me doggo memes!"]
+let ezlist = ["Wait... This isn't what I typed!","Anyone else really like Rick Astley?","Hey helper, wanna have some fun UwU", "Sometimes I sing soppy, love songs in the car.","I like long walks on the beach and playing Hypixel","Please go easy on me, this is my first try!","You're a great person! Do you want to play some games with me?","In my free time I like to watch neko videos on Youtube", "When I saw the witch with the potion, I knew there was trouble brewing.", "If the Minecraft world is infinite, how does the sun revolve around it?","Hello everyone! I am an innocent player who loves everything Hypixel.","Plz give me doggo memes!"]
 let version = '1.1.9'
 
 let ownerID = process.env.ownerID
@@ -24,6 +24,7 @@ let remember = []
 
 
 let url = 'https://waifupictures.000webhostapp.com/waifu/'
+let urls = 'https://waifupictures.000webhostapp.com/loli/'
 let animelist = ['AkiraKogami.jpg', 'Ayaki.png', 'Chika.jpg', 'Jasmine.jpg', 'Ichika.png', 'KiraraBernstein.jpg', 'Kyouko.jpg', 'Makina_Irisu.png', 'Rem.jpg', 'REMILIA_SCARLET.jpg', 'Shiro.png', 'Yoshino.png']
 let animename = ['Akira Kogami', 'Kamisato Ayaka', 'Chika Fujiwara', 'Jasmine Kashiro', 'Ichika Nakano', 'Kirara Bernstein', 'Kyouko Hori', 'Makina_Irisu', 'Rem', 'Remilia Scarlet', 'Shiro', 'Yoshino Himekawa']
 console.log(animename.length, animelist.length)
@@ -480,9 +481,14 @@ client.on('message', msg =>{
 	} else if (command == 'bank'){
 		const coins = messages.substr(messages.toLowerCase().indexOf('bank') + 5)
 		return
+	} else if (command == 'hentai'){
+		const embed = new discord.MessageEmbed()
+			.setTitle('Loli')
+			.setDescription('You might wan\'t this loli UwUs')
+			.setImage('https://static.wikia.nocookie.net/watashi-ni-tenshi-ga-maiorita/images/e/e6/Bang.jpg/revision/latest?cb=20200427191320')
+		msg.channel.send(embed)
 	}
 })
-
 
 client.login(token)
 
