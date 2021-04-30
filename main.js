@@ -48,6 +48,13 @@ function empty(array){
 	}
 }
 
+function m(n,d){
+	x=(''+n).length,p=Math.pow,d=p(10,d)
+	x-=x%3
+	return Math.round(n*d/p(10,x))/d+" kMGTPE"[x/3]
+}
+
+
 function isitalic(text){
 	if(text.startsWith('_') && text.endsWith('_')){
 		const str = '\\'+text
@@ -207,8 +214,10 @@ client.on('message', msg =>{
 							msg.channel.send(embed)
 						} else if (bodys.session.online) {
 							const embed = new discord.MessageEmbed()
-								.setTitle("Player Activity")
-								.setDescription(bodys.session.gameType)
+								.setTitle(name)
+								.setURL('https://sky.shiiyu.moe/stats/'+name)
+								.setThumbnail('https://crafatar.com/renders/body/'+uuid)
+								.addField('Online', '🟢')
 							msg.channel.send(embed)
 						}
 					}
@@ -468,7 +477,9 @@ client.on('message', msg =>{
 			.setDescription('Cuteness is just a randomized number')
 			.setFooter('Made by Jashli')
 		msg.channel.send(embed)
-	}
+	} else if (command == 'bank')
+		const coins = messages.substr(messages.toLowerCase().indexOf('bank') + 5)
+		return
 })
 
 
