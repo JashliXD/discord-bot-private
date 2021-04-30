@@ -477,9 +477,10 @@ client.on('message', msg =>{
 			.setDescription('Cuteness is just a randomized number')
 			.setFooter('Made by Jashli')
 		msg.channel.send(embed)
-	} else if (command == 'bank')
+	} else if (command == 'bank'){
 		const coins = messages.substr(messages.toLowerCase().indexOf('bank') + 5)
 		return
+	}
 })
 
 
