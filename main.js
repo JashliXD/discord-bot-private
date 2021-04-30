@@ -91,7 +91,7 @@ client.on('message', msg =>{
 			}, 5000))
 			.catch(console.error)
 		
-	}else if (msg.content == 'ez'){
+	}else if (msg.content.toLowerCase() == 'ez'){
 		randomhypixel = Math.floor(Math.random() * ezlist.length)
 		msg.delete()
 		msg.channel.send(ezlist[randomhypixel])
