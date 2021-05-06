@@ -1,1 +1,1 @@
-"# discord-bot-js" 
+"Just a discord bot"
