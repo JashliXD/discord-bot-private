@@ -78,7 +78,7 @@ client.on('message', msg =>{
 	if (swearList.some(word => msg.content.toLowerCase().includes(word.toLowerCase()))){
 		randomsweardetect = Math.floor(Math.random() * sweardetection.length)
 		msg.delete()
-		console.log(msg.auther.username+':',msg.content,'| Has been deleted')
+		console.log(msg.auther.user+':',msg.content,'| Has been deleted')
 	}else if (msg.content == 'ez'){
 		randomhypixel = Math.floor(Math.random() * ezlist.length)
 		msg.react('❤️')
