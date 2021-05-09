@@ -75,14 +75,6 @@ client.on('message', msg =>{
 	const command = isCommand(msg.content)
 	const messages = msg.content
 	const owner = msg.author.id
-	if (swearList.some(word => msg.content.toLowerCase().includes(word.toLowerCase()))){
-		randomsweardetect = Math.floor(Math.random() * sweardetection.length)
-		msg.delete()
-		console.log(msg.auther.name+':',msg.content,'| Has been deleted')
-	}else if (msg.content == 'ez'){
-		randomhypixel = Math.floor(Math.random() * ezlist.length)
-		msg.react('❤️')
-	}
 	// BLOCK
 	if (command == 'ping'){
 		const EmbedText = new discord.MessageEmbed()
