@@ -8,7 +8,7 @@ const client = new discord.Client();
 //let token = config.token;
 //let ownerID = config.ownerID
 
-let swearList = ['nigga','nigger','jackass','idiot','idiut','jackas','motherfucker','you son of a bitch','asshole', 'dickhead'] // To delete message with
+let swearList = ['nigga','nigger','jackass','idiot','idiut','jackas','motherfucker','asshole', 'dickhead','fuck'] // To delete message with
 let sweardetection = ["Please stop swearing", "Swear Detected", "Don't swear", "Batō o yamete kudasai"]
 let ezlist = ["Wait... This isn't what I typed!","Anyone else really like Rick Astley?","Hey helper, how play game?", "Sometimes I sing soppy, love songs in the car.","I like long walks on the beach and playing Hypixel","Please go easy on me, this is my first game!","You're a great person! Do you want to play some Hypixel games with me?","In my free time I like to watch cat videos on Youtube", "When I saw the witch with the potion, I knew there was trouble brewing.", "If the Minecraft world is infinite, how does the sun revolve around it?","Hello everyone! I am an innocent player who loves everything Hypixel.","Plz give me doggo memes!"]
 let version = '1.1.9'
@@ -25,7 +25,7 @@ let remember = []
 
 let url = 'https://waifupictures.000webhostapp.com/waifu/'
 let animelist = ['AkiraKogami.jpg', 'Ayaki.png', 'Chika.jpg', 'Jasmine.jpg', 'Ichika.png', 'KiraraBernstein.jpg', 'Kyouko.jpg', 'Makina_Irisu.png', 'Rem.jpg', 'REMILIA_SCARLET.jpg', 'Shiro.png', 'Yoshino.png']
-let animename = ['Akira Kogami', 'Kamisato Ayaka', 'Chika Fujiwara', 'Jasmine Kashiro', 'Ichika Nakano', 'Kirara Bernstein', 'Kyouko Hori', 'Makina_Irisu', 'Rem', 'Remilia Scarlet', 'Shiro', 'Yoshino Himekawa']
+let animename = ['Akira Kogami', 'Kamisato Ayaka', 'Chika Fujiwara', 'Jasmine Kashiro', 'Ichika Nakano', 'Kirara Bernstein', 'Kyouko Hori', 'Makina Irisu', 'Rem', 'Remilia Scarlet', 'Shiro', 'Yoshino Himekawa']
 console.log(animename.length, animelist.length)
 let randomized;
 let randomized2;
@@ -78,16 +78,10 @@ client.on('message', msg =>{
 	if (swearList.some(word => msg.content.toLowerCase().includes(word.toLowerCase()))){
 		randomsweardetect = Math.floor(Math.random() * sweardetection.length)
 		msg.delete()
-		msg.channel.send(sweardetection[randomsweardetect])
-			.then(messages => setTimeout(()=> {
-				messages.delete()
-			}, 5000))
-			.catch(console.error)
-		
+		console.log(msg.auther.username+':',msg.content,'| Has been deleted')
 	}else if (msg.content == 'ez'){
 		randomhypixel = Math.floor(Math.random() * ezlist.length)
-		msg.delete()
-		msg.channel.send(ezlist[randomhypixel])
+		msg.react('❤️')
 	}
 	// BLOCK
 	if (command == 'ping'){
