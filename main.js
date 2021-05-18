@@ -8,9 +8,6 @@ const client = new discord.Client();
 //let token = config.token;
 //let ownerID = config.ownerID
 
-let swearList = ['nigga','nigger','jackass','idiot','idiut','jackas','motherfucker','asshole', 'dickhead','fuck'] // To delete message with
-let sweardetection = ["Please stop swearing", "Swear Detected", "Don't swear", "Batō o yamete kudasai"]
-let ezlist = ["Wait... This isn't what I typed!","Anyone else really like Rick Astley?","Hey helper, how play game?", "Sometimes I sing soppy, love songs in the car.","I like long walks on the beach and playing Hypixel","Please go easy on me, this is my first game!","You're a great person! Do you want to play some Hypixel games with me?","In my free time I like to watch cat videos on Youtube", "When I saw the witch with the potion, I knew there was trouble brewing.", "If the Minecraft world is infinite, how does the sun revolve around it?","Hello everyone! I am an innocent player who loves everything Hypixel.","Plz give me doggo memes!"]
 let version = '1.1.9'
 
 let ownerID = process.env.ownerID
