@@ -2,17 +2,17 @@
 const request = require('request');
 const discord = require('discord.js');
 const client = new discord.Client();
-const config = require('./config.json')
+//const config = require('./config.json')
 
-let api = config.api;
-let token = config.token;
-let ownerID = config.ownerID
+//let api = config.api;
+//let token = config.token;
+//let ownerID = config.ownerID
 
 let version = '1.1.9'
 
-//let ownerID = process.env.ownerID
-//let api = process.env.api 
-//let token = process.env.token
+let ownerID = process.env.ownerID
+let api = process.env.api 
+let token = process.env.token
 
 let prefix = '?';
 let jokeapi = 'https://icanhazdadjoke.com/'
