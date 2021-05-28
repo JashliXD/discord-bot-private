@@ -2,17 +2,17 @@
 const request = require('request');
 const discord = require('discord.js');
 const client = new discord.Client();
-//const config = require('./config.json')
+const config = require('./config.json')
 
-//let api = config.api;
-//let token = config.token;
-//let ownerID = config.ownerID
+let api = config.api;
+let token = config.token;
+let ownerID = config.ownerID
 
 let version = '1.1.9'
 
-let ownerID = process.env.ownerID
-let api = process.env.api 
-let token = process.env.token
+//let ownerID = process.env.ownerID
+//let api = process.env.api 
+//let token = process.env.token
 
 let prefix = '?';
 let jokeapi = 'https://icanhazdadjoke.com/'
@@ -45,6 +45,32 @@ function empty(array){
 	}
 }
 
+function m(n,d){var x=(''+n).length,p=Math.pow,d=p(10,d)
+x-=x%3
+return Math.round(n*d/p(10,x))/d+" kMBTQE"[x/3]}
+
+function k (rep) {
+ 	rep = rep+''; // coerce to string
+ 	if (rep < 1000) {
+    	return rep; // return the same number
+ 	}
+  	if (rep < 10000) { // place a comma between
+    	return rep.charAt(0) + ',' + rep.substring(1);
+	}
+    // divide and format
+  	return (rep/1000).toFixed(rep % 1000 != 0)+'k';
+}
+
+function damageOutput(num){
+	if (num > 1000000){
+		return m(num,1)
+	}
+	if(num > 10000){
+		return k(num)
+	} else {
+		return num
+	}
+}
 function isitalic(text){
 	if(text.startsWith('_') && text.endsWith('_')){
 		const str = '\\'+text
@@ -456,6 +482,47 @@ client.on('message', msg =>{
 	} else if (command == 'bank'){
 		const coins = messages.substr(messages.toLowerCase().indexOf('bank') + 5)
 		return
+	} else if (command == 'damage'){
+		const rawArray = messages.substr(messages.toLowerCase().indexOf('damage') + 7)
+		console.log(rawArray)
+		let array = rawArray.split(',')
+		// damage,strength,cd,multiplier
+		let weapondamage = parseInt(array[0])
+		let strength = parseInt(array[1])
+		let critdamage = parseInt(array[2])
+		let additivemultiplier = parseInt(array[1])
+
+		let errors = []
+
+		if (weapondamage == NaN){
+			errors.push('Damage')
+		}
+		if (strength == NaN){
+			errors.push('Strength')
+		}
+		if (critdamage == NaN){
+			errors.push('Crit Damage')
+		}
+		if (additivemultiplier == NaN){
+			errors.push('Multiplier')
+		}
+
+		if (errors.length != 0){
+			console.log('All errors:',errors)
+			return
+		}
+
+		const olddamage = (5 + weapondamage + strength/5) * (1 + strength/100) * (1 + critdamage / 100) * (1 + additivemultiplier / 100)
+		const damage = (5 + weapondamage) * (1 + strength/100) * (1 + critdamage / 100) * (1 + additivemultiplier / 100)
+
+		const embed = new discord.MessageEmbed()
+			.setTitle('Damage')
+			.addFields(
+				{name: 'Old damage', value: damageOutput(olddamage,2)},
+				{name: 'New damage', value: damageOutput(damage,2)}
+			)
+			.setFooter('Made by Miko Iino')
+		msg.channel.send(embed)
 	}
 })
 
