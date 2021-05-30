@@ -293,7 +293,9 @@ client.on('message', msg =>{
 							if (i == 0){
 								playerName.push("Firstname: "+bodys[i].name)
 							} else {
-								playerName.push("Oldnames: "+bodys[i].name+ " ChangedtoAt: " +unixtodate(bodys[i].changedToAt))
+								if (i != bodys.length - 1){
+									playerName.push('Oldnames: '+bodys[i].name)
+								}
 							}
 							if (i == bodys.length - 1){
 								playerName.push("Latest name: "+bodys[i].name)
