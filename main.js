@@ -2,17 +2,13 @@
 const request = require('request');
 const discord = require('discord.js');
 const client = new discord.Client();
-//const config = require('./config.json')
+//const dotenv = require('dotenv').config()
 
-//let api = config.api;
-//let token = config.token;
-//let ownerID = config.ownerID
+let api = process.env.api
+let token = process.env.token
+let ownerID = process.env.ownerID
 
 let version = '1.1.9'
-
-let ownerID = process.env.ownerID
-let api = process.env.api 
-let token = process.env.token
 
 let prefix = '?';
 let jokeapi = 'https://icanhazdadjoke.com/'
@@ -21,8 +17,8 @@ let remember = []
 
 
 let url = 'https://waifupictures.000webhostapp.com/waifu/'
-let animelist = ['AkiraKogami.jpg', 'Ayaki.png', 'Chika.jpg', 'Jasmine.jpg', 'Ichika.png', 'KiraraBernstein.jpg', 'Kyouko.jpg', 'Makina_Irisu.png', 'Rem.jpg', 'REMILIA_SCARLET.jpg', 'Shiro.png', 'Yoshino.png']
-let animename = ['Akira Kogami', 'Kamisato Ayaka', 'Chika Fujiwara', 'Jasmine Kashiro', 'Ichika Nakano', 'Kirara Bernstein', 'Kyouko Hori', 'Makina Irisu', 'Rem', 'Remilia Scarlet', 'Shiro', 'Yoshino Himekawa']
+let animelist = ['AkiraKogami.jpg', 'Ayaki.png', 'Chika.jpg', 'Jasmine.jpg', 'Ichika.png', 'KiraraBernstein.jpg', 'Kyouko.jpg', 'Makina_Irisu.png', 'Rem.jpg', 'REMILIA_SCARLET.jpg', 'Shiro.png', 'Yoshino.png','Hayasaka.png','Emilia.png','Kaguya.jpg','Megumin.jpg','Ram.png']
+let animename = ['Akira Kogami', 'Kamisato Ayaka', 'Chika Fujiwara', 'Jasmine Kashiro', 'Ichika Nakano', 'Kirara Bernstein', 'Kyouko Hori', 'Makina Irisu', 'Rem', 'Remilia Scarlet', 'Shiro', 'Yoshino Himekawa','Ai Hayasaka', 'Emilia', 'Kaguya Shinomiya', 'Megumin', 'Ram']
 console.log(animename.length, animelist.length)
 let randomized;
 let randomized2;
@@ -100,13 +96,18 @@ client.on('message', msg =>{
 	const owner = msg.author.id
 	// BLOCK
 	if (command == 'ping'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		const EmbedText = new discord.MessageEmbed()
 			.setTitle('Meow')
 			.setColor(0xff0000)
 			.setDescription('Meow Meow')
 		msg.channel.send(EmbedText)
 	} else if (command == 'uuid'){
-
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		const name = messages.substr(messages.toLowerCase().indexOf('uuid') + 5)
 
 		if (name == ''){
@@ -129,6 +130,9 @@ client.on('message', msg =>{
 			}
 		})
 	} else if (command == 'guild'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		const guilds = messages.substr(messages.toLowerCase().indexOf('guild') + 6)
 		if (guilds == ''){
 			msg.channel.send(`You forgot to add a name. Example: ${prefix}guild [GUILDNAME]`)
@@ -140,49 +144,32 @@ client.on('message', msg =>{
 			json: true
 		}, (err,req,body) => {
 			if (body == undefined){
-				msg.channel.send("Undefined guild")
+				msg.channel.send('Guild doesn\'t exist')
 				return
-			} else if(body.guild == null){
-				msg.channel.send("Undefined guild")
-			}else {
-				let timestamp = body.guild.created;
-				let players = []
-				var i
-				if (body.guild == null){
-					msg.channel.send("Undefined guild")
-					return;
-				}else{
-					for(i in body.guild.members){
-						let newi = i
-						let rank = body.guild.members[i].rank;
-						request({
-								method: 'GET',
-								url: 'https://api.mojang.com/user/profiles/'+body.guild.members[i].uuid+'/names',
-								json: true
-							}, (err,req,bodys) => {
-								let getlength = bodys.length
-								players.push("Player: "+isitalic(bodys[getlength - 1].name) + ' Rank: ' + rank +'\n')
-								console.log(players)
-								if (newi == body.guild.members.length - 1 || newi == 14){
-									const embed = new discord.MessageEmbed()
-										.setTitle("GUILD PLAYER")
-										.setColor(0x000ff)
-										.setDescription("Created: "+unixtodate(timestamp)+"\n"+empty(players))
-										.setFooter("Jashli Bot")
-
-									msg.channel.send(embed)
-								}
-								
-							})
-					};
-				}
-
 			}
+			const guildowner = body.guild.members[0].uuid
+			let ownername = 'None'
+			let playercount = body.guild.members.length
+			// get ownername
+			request({
+				method: 'get',
+				url: 'https://api.mojang.com/user/profiles/'+guildowner+'/names',
+				json: true
+			}, (err,req,bodys)=>{
+				const embed = new discord.MessageEmbed()
+					.setTitle(body.guild.name)
+					.setFooter('Made by Jashwi')
+					.addFields({name:'Owner',value:bodys[bodys.length - 1].name,inline:true},{name:'Playercount',value:playercount,inline:true},{name:'Coins',value:body.guild.coins,inline:true},{name:'Created',value:unixtodate(body.guild.created),inline:true})
+				msg.channel.send(embed)
+			})
 		})
 	} else if (command == 'status'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		let name1 = messages.substr(messages.toLowerCase().indexOf('status') + 7)
 		const name = isitalic(name1)
-		console.log(name)
+		let names
 		let uuid
 		if (name == '') {
 			msg.channel.send(`You forgot to add a name. Example: ${prefix}status [PLAYER/NAME]`)
@@ -197,40 +184,92 @@ client.on('message', msg =>{
 				msg.channel.send('Undefined player')
 				return;
 			} else {
+				console.log(body)
 				uuid = body.id;
+				names = isitalic(body.name);
 				request({
 					method: 'GET',
 					url: 'https://api.hypixel.net/status?key='+api+'&uuid='+ uuid,
 					json: true
 				}, (err,req,bodys) => {
+					console.log(bodys)
 					if (bodys == undefined){
 						msg.channel.send('Non hypixel player or API off')
 						return
 					} else {
-						if (bodys.session.online == false){
-							const embed = new discord.MessageEmbed()
-								.setTitle(name)
-								.setURL('https://sky.shiiyu.moe/stats/'+name)
-								.setThumbnail('https://crafatar.com/renders/body/'+uuid)
-								.addField('Online', '🔴')
-							msg.channel.send(embed)
-						} else if (bodys.session.online) {
-							const embed = new discord.MessageEmbed()
-								.setTitle(name)
-								.setURL('https://sky.shiiyu.moe/stats/'+name)
-								.setThumbnail('https://crafatar.com/renders/body/'+uuid)
-								.addField('Online', '🟢')
-							msg.channel.send(embed)
+						let ifonline = bodys.session.online;
+						let thumbnail = 'https://craftar.com/renders/body/'+uuid;
+						let game = bodys.session.gameType
+						let location = 'None'
+						let rewrite = 'None'
+						let simplified = 'None'
+						if (game == 'SKYBLOCK'){
+							simplified = 'Skyblock'
+						} else if (game == 'BEDWARS'){
+							simplified = 'Bedwars'
+						} else if (game == 'SKYWARS'){
+							simplified = 'Skywars'
 						}
+						if (game == 'SKYBLOCK'){
+							location = bodys.session.mode
+							if (location == 'hub'){
+								rewrite = 'Hub'
+							} else if (location == 'mining_1'){
+								rewrite = 'Gold Mines'
+							} else if (location == 'mining_2'){
+								rewrite = 'Deep Caverns'
+							} else if (location == 'mining_3'){
+								rewrite = 'Dwarven Mines'
+							} else if (location == 'combat_1'){
+								rewrite = 'Spider\'s Den'
+							} else if (location == 'combat_2'){
+								rewrite = 'Blazing Fortress'
+							} else if (location == 'combat_3'){
+								rewrite = 'The End'
+							} else if (location == 'farming_1'){
+								rewrite = 'The Barn'
+							} else if (location == 'dungeon_hub'){
+								rewrite = 'Dungeon Hub'
+							} else if (location == 'dungeon'){
+								rewrite = 'Dungeon'
+							} else if (location == 'dynamic'){
+								rewrite = 'Private Island'
+							}
+						}
+
+						let statusLogo = ['🔴','🟢']
+						let status = 'None'
+
+						if (ifonline == true){
+							status = statusLogo[1]
+						} else {
+							status = statusLogo[0]
+						}
+						console.log(status)
+						console.log(simplified)
+						console.log(rewrite)
+						const embed = new discord.MessageEmbed()
+							.setTitle(name)
+							.addFields({name:'Online',value:status},{name:'Game',value: simplified},{name:'Lobby',value:rewrite})
+							.setThumbnail('https://crafatar.com/renders/head/'+uuid)
+							.setFooter('Made by Jashwi')
+
+						msg.channel.send(embed)
 					}
 				})
 			}
 		})
 
 	} else if (command == 'flip'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		let mathsthing = Math.round(Math.random() * 100)
 		msg.channel.send("Congratulations, You've made "+mathsthing+ "M today.")
 	} else if (command == 'prefix'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		const newprefix = messages.substr(messages.toLowerCase().indexOf('prefix') + 7);
 		console.log("Someone is trying to change prefix. Their ID: "+msg.author.id)
 		if (owner != ownerID){
@@ -252,6 +291,9 @@ client.on('message', msg =>{
 			msg.channel.send('Your input is not in my database')
 		}
 	} else if (command == 'help'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		const embed = new discord.MessageEmbed()
 			.setTitle("List of my Commands")
 			.setColor(0x000ff)
@@ -259,6 +301,9 @@ client.on('message', msg =>{
 			.setFooter('Made by Jashwi')
 		msg.channel.send(embed)
 	} else if (command == 'history'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		const name = messages.substr(messages.toLowerCase().indexOf('history') + 8)
 		if (name == ''){
 			msg.channel.send(`You forgot to add the name. Example: ${prefix}history [NAME]`)
@@ -291,14 +336,14 @@ client.on('message', msg =>{
 						let playerName = []
 						for(i in bodys){
 							if (i == 0){
-								playerName.push("Firstname: "+bodys[i].name)
+								playerName.push("Firstname: "+isitalic(bodys[i].name))
 							} else {
 								if (i != bodys.length - 1){
-									playerName.push('Oldnames: '+bodys[i].name)
+									playerName.push('Oldnames: '+isitalic(bodys[i].name))
 								}
 							}
 							if (i == bodys.length - 1){
-								playerName.push("Latest name: "+bodys[i].name)
+								playerName.push("Latest name: "+isitalic(bodys[i].name))
 								const embed = new discord.MessageEmbed()
 									.setTitle("Name history of "+name)
 									.setDescription(playerName)
@@ -311,6 +356,9 @@ client.on('message', msg =>{
 			}
 		})
 	} else if (command == 'joke') {
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		request({
 			method: 'GET',
 			url: jokeapi,
@@ -319,8 +367,14 @@ client.on('message', msg =>{
 			msg.channel.send(body.joke)
 		})
 	} else if (msg.content == 'I love you'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		msg.react('❤️')
 	} else if (command == 'poll'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		const string = messages.substr(messages.toLowerCase().indexOf('poll') + 5)
 		if (string == ''){
 			msg.channel.send(`You forgot to add a text. Example: ${prefix}poll`)
@@ -372,6 +426,9 @@ client.on('message', msg =>{
 			}
 		}
 	} else if (command == 'player'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		const uuid = messages.substr(messages.toLowerCase().indexOf('player') + 7)
 		request({
 			method: 'get',
@@ -391,6 +448,9 @@ client.on('message', msg =>{
 			msg.channel.send(embed)
 		})
 	} else if (command == 'skin'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		const commands = messages.substr(messages.toLowerCase().indexOf('skin') + 5)
 		let issplitted = commands.split(' ')
 
@@ -443,8 +503,14 @@ client.on('message', msg =>{
 			}
 		})
 	} else if (command == 'version'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		msg.channel.send(version)
 	} else if (command == 'remember'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		if (owner != ownerID){
 			return
 		}
@@ -456,6 +522,9 @@ client.on('message', msg =>{
 		remember.push(key)
 		msg.channel.send('Added to database')
 	} else if (command == 'database'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		if (owner != ownerID){
 			return
 		}
@@ -472,7 +541,10 @@ client.on('message', msg =>{
 			return
 		}
 	} else if (command == 'waifu'){
-		randomized = Math.floor(Math.random() * animelist.length + 1)
+		if (msg.channel.name == 'verify'){
+			return
+		}
+		randomized = Math.floor(Math.random() * animelist.length)
 		randomized2 = Math.floor(Math.random() * 101)
 		const embed = new discord.MessageEmbed()
 			.setTitle('Your waifu is '+ animename[randomized])
@@ -482,9 +554,15 @@ client.on('message', msg =>{
 			.setFooter('Made by Jashli')
 		msg.channel.send(embed)
 	} else if (command == 'bank'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		const coins = messages.substr(messages.toLowerCase().indexOf('bank') + 5)
 		return
 	} else if (command == 'damage'){
+		if (msg.channel.name == 'verify'){
+			return
+		}
 		const rawArray = messages.substr(messages.toLowerCase().indexOf('damage') + 7)
 		console.log(rawArray)
 		let array = rawArray.split(',')
@@ -520,11 +598,64 @@ client.on('message', msg =>{
 		const embed = new discord.MessageEmbed()
 			.setTitle('Damage')
 			.addFields(
-				{name: 'Old damage', value: damageOutput(olddamage,2)},
-				{name: 'New damage', value: damageOutput(damage,2)}
+				{name: 'Old damage', value: damageOutput(olddamage,2),inline:true},
+				{name: 'New damage', value: damageOutput(damage,2),inline:true}
 			)
 			.setFooter('Made by Miko Iino')
 		msg.channel.send(embed)
+	} else if (command == 'verify'){
+		const name = messages.substr(messages.toLowerCase().indexOf('verify') + 7)
+		
+
+		if (msg.channel.name != 'verify'){
+			return
+		}
+
+		if (name == ''){
+			msg.channel.send(`You forgot your name. Example: ${prefix}verify [IGN/NAME]`).then(m=>{setTimeout(()=>{m.delete()},3000)}).catch(console.error)
+			setTimeout(()=> {msg.delete()},1000)
+			return
+		}
+
+		let uuid
+		request({
+			method:'get',
+			url:'https://api.mojang.com/users/profiles/minecraft/'+name,
+			json:true
+		}, (err,req,body) => {
+			uuid = body.id
+			request({
+				method: 'get',
+				url: 'https://api.hypixel.net/player?key='+api+'&uuid='+uuid,
+				json:true
+			},(err,req,bodys)=> {
+				if (bodys.player.socialMedia == undefined){
+					msg.channel.send('You haven\'t put your discord on hypixel.').then(m => {setTimeout(()=>{m.delete()},3000)}).catch(console.error)
+					return
+				}
+				const playerSocial = bodys.player.socialMedia.links.DISCORD
+				const id = msg.author.id
+				const user = client.users.cache.get(id)
+
+				if (playerSocial == user.tag){
+					const role = msg.guild.roles.cache.find(role => role.name === 'Verified')
+					const role1 = msg.guild.roles.cache.find(role => role.name === 'member')
+					if (msg.member.roles.cache.has(role.id)) {
+						console.log('Already verified')
+					} else {
+						msg.member.roles.add(role).catch(console.error)
+					}
+					if (msg.member.roles.cache.has(role1.id)) {
+						console.log('Already member')
+					} else {
+						msg.member.roles.add(role1).catch(console.error)
+					}
+				} else {
+					msg.channel.send('Update your social media on hypixel.').then(m => {setTimeout(()=>{m.delete()},3000)}).catch(console.error)
+				}
+			})
+		})
+		setTimeout(()=> {msg.delete()},1000)
 	}
 })
 
