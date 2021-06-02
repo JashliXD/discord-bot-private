@@ -605,7 +605,7 @@ client.on('message', msg =>{
 		msg.channel.send(embed)
 	} else if (command == 'verify'){
 		const name = messages.substr(messages.toLowerCase().indexOf('verify') + 7)
-		
+		setTimeout(()=> {msg.delete()},1000)
 
 		if (msg.channel.name != 'verify'){
 			return
@@ -613,7 +613,6 @@ client.on('message', msg =>{
 
 		if (name == ''){
 			msg.channel.send(`You forgot your name. Example: ${prefix}verify [IGN/NAME]`).then(m=>{setTimeout(()=>{m.delete()},3000)}).catch(console.error)
-			setTimeout(()=> {msg.delete()},1000)
 			return
 		}
 
@@ -650,10 +649,8 @@ client.on('message', msg =>{
 					} else {
 						msg.member.roles.add(role1).catch(console.error)
 					}
-					setTimeout(()=> {msg.delete()},1000)
 				} else {
 					msg.channel.send('Update your social media on hypixel.').then(m => {setTimeout(()=>{m.delete()},3000)}).catch(console.error)
-					setTimeout(()=> {msg.delete()},1000)
 				}
 			})
 		})
