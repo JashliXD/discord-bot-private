@@ -650,12 +650,13 @@ client.on('message', msg =>{
 					} else {
 						msg.member.roles.add(role1).catch(console.error)
 					}
+					setTimeout(()=> {msg.delete()},1000)
 				} else {
 					msg.channel.send('Update your social media on hypixel.').then(m => {setTimeout(()=>{m.delete()},3000)}).catch(console.error)
+					setTimeout(()=> {msg.delete()},1000)
 				}
 			})
 		})
-		setTimeout(()=> {msg.delete()},1000)
 	}
 })
 
