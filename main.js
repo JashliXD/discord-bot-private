@@ -2,7 +2,7 @@
 const request = require('request');
 const discord = require('discord.js');
 const client = new discord.Client();
-//const dotenv = require('dotenv').config()
+const dotenv = require('dotenv').config()
 
 let api = process.env.api
 let token = process.env.token
@@ -143,7 +143,7 @@ client.on('message', msg =>{
 			url: 'https://api.hypixel.net/guild?key='+api+'&name='+guilds,
 			json: true
 		}, (err,req,body) => {
-			if (body == undefined){
+			if (body.guild == null){
 				msg.channel.send('Guild doesn\'t exist')
 				return
 			}
