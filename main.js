@@ -622,12 +622,20 @@ client.on('message', msg =>{
 			url:'https://api.mojang.com/users/profiles/minecraft/'+name,
 			json:true
 		}, (err,req,body) => {
+			if (body == undefined){
+				msg.channel.send('Player doesn\'t exist').then(m => {setTimeout(()=>{m.delete()},3000)}).catch(console.error)
+				return
+			}
 			uuid = body.id
 			request({
 				method: 'get',
 				url: 'https://api.hypixel.net/player?key='+api+'&uuid='+uuid,
 				json:true
 			},(err,req,bodys)=> {
+				if (body.player == null){
+					msg.channel.send('None hypixel player').then(m => {setTimeout(()=>{m.delete()},3000)}).catch(console.error)
+					return
+				}
 				if (bodys.player.socialMedia == undefined){
 					msg.channel.send('You haven\'t put your discord on hypixel.').then(m => {setTimeout(()=>{m.delete()},3000)}).catch(console.error)
 					return
