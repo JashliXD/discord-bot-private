@@ -564,33 +564,70 @@ client.on('message', msg =>{
 			return
 		}
 		const rawArray = messages.substr(messages.toLowerCase().indexOf('damage') + 7)
+		if (rawArray == ''){
+			msg.channel.send(`You forgot to Weapon Damage, Strength, Crit Damage, and Multiplier. Example: ${prefix}damage [Damage],[Strength],[CritDamage],[Combat Level]`)
+			return
+		}
 		console.log(rawArray)
 		let array = rawArray.split(',')
 		// damage,strength,cd,multiplier
 		let weapondamage = parseInt(array[0])
 		let strength = parseInt(array[1])
 		let critdamage = parseInt(array[2])
-		let additivemultiplier = parseInt(array[1])
+		let combatlvl = parseInt(array[3])
+
+		console.log(weapondamage,strength,critdamage,combatlvl)
 
 		let errors = []
 
-		if (weapondamage == NaN){
+		let additivemultiplier
+		let extramultiplier
+		if (isNaN(weapondamage)){
 			errors.push('Damage')
 		}
-		if (strength == NaN){
+		if (isNaN(strength)){
 			errors.push('Strength')
 		}
-		if (critdamage == NaN){
+		if (isNaN(critdamage)){
 			errors.push('Crit Damage')
 		}
-		if (additivemultiplier == NaN){
-			errors.push('Multiplier')
+		if (isNaN(combatlvl)){
+			errors.push('Combat Level')
 		}
+
+		console.log(errors.length)
 
 		if (errors.length != 0){
 			console.log('All errors:',errors)
+			msg.channel.send('All errors: '+ errors)
 			return
 		}
+
+		if (combatlvl > 60){
+			msg.channel.send('Combat level is too high')
+		} else if (combatlvl < 1){
+			msg.channel.send('Combat level too low')
+		}
+
+		if (weapondamage < 0 || strength < 0){
+			msg.channel.send('Weapond damage, Strength can\'t be lower than zero')
+			return
+		}
+
+		if (combatlvl > 50){
+			extramultiplier = combatlvl - 50
+			additivemultiplier = (50 * 4) + extramultiplier
+			console.log(additivemultiplier)
+		} else {
+			additivemultiplier = combatlvl * 4
+			console.log(additivemultiplier)
+		}
+
+		
+
+		
+
+		
 
 		const olddamage = (5 + weapondamage + strength/5) * (1 + strength/100) * (1 + critdamage / 100) * (1 + additivemultiplier / 100)
 		const damage = (5 + weapondamage) * (1 + strength/100) * (1 + critdamage / 100) * (1 + additivemultiplier / 100)
