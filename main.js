@@ -565,7 +565,7 @@ client.on('message', msg =>{
 		}
 		const rawArray = messages.substr(messages.toLowerCase().indexOf('damage') + 7)
 		if (rawArray == ''){
-			msg.channel.send(`You forgot to Weapon Damage, Strength, Crit Damage, and Multiplier. Example: ${prefix}damage [Damage],[Strength],[CritDamage],[Combat Level]`)
+			msg.channel.send(`You forgot to Weapon Damage, Strength, Crit Damage, and Combat Level. Example: ${prefix}damage [Damage],[Strength],[CritDamage],[Combat Level]`)
 			return
 		}
 		console.log(rawArray)
