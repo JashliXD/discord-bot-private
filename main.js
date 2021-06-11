@@ -565,7 +565,7 @@ client.on('message', msg =>{
 		}
 		const rawArray = messages.substr(messages.toLowerCase().indexOf('damage') + 7)
 		if (rawArray == ''){
-			msg.channel.send(`You forgot to Weapon Damage, Strength, Crit Damage, and Combat Level. Example: ${prefix}damage [Damage],[Strength],[CritDamage],[Combat Level]`)
+			msg.channel.send(`You forgot to Weapon Damage, Strength, Crit Damage, and Multiplier. Example: ${prefix}damage [Damage],[Strength],[CritDamage],[Combat Level]`)
 			return
 		}
 		console.log(rawArray)
@@ -594,7 +594,7 @@ client.on('message', msg =>{
 		if (isNaN(combatlvl)){
 			errors.push('Combat Level')
 		}
-
+		execute
 		console.log(errors.length)
 
 		if (errors.length != 0){
@@ -699,11 +699,45 @@ client.on('message', msg =>{
 				}
 			})
 		})
+	} 
+
+	// MY COMMANDS
+	if (command == 'delete'){
+		const c = messages.substr(messages.toLowerCase().indexOf('delete')+7)
+		if (owner != ownerID){
+			msg.channel.send("Sorry, you don't have permission to use this command")
+			return
+		}
+		if (c == ''){
+			msg.channel.send('You didn\'t put anything').then(msg=> {msg.delete()})
+			return
+		}
+		const limit = 99
+		var num = parseInt(c)
+		if (isNaN(num)){
+			msg.channel.send('Input is not a number.').then(msg=> {msg.delete()})
+			return
+		}
+		if (num == 1){
+			num = 2
+		}
+		if (num > limit){
+			msg.delete()
+			return
+		}
+
+		msg.channel.send('You deleted '+c+' message').then(msg => {msg.delete({timeout: 2000})})
+		msg.channel.bulkDelete(num)
+	}
+
+	// SPAM FOR MEE9 rank
+	if (command == 'del'){
+		msg.delete({timeout:250})
 	}
 })
 
 
-client.login(token)
+client.login(token).catch(console.error)
 
 
 // UUID Examples
