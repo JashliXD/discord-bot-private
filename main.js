@@ -8,6 +8,8 @@ let api = process.env.api
 let token = process.env.token
 let ownerID = process.env.ownerID
 
+let channels = require('./channel.json')
+
 let version = '1.1.9'
 
 let prefix = '?';
@@ -95,10 +97,6 @@ client.on('message', msg =>{
 	const command = isCommand(msg.content)
 	const messages = msg.content
 	const owner = msg.author.id
-	// Message deleter for verify // Only random texts
-	if (msg.channel.name == 'verify' && command != 'verify'){
-		msg.delete()
-	}
 	// MESSAGE
 	if (command == 'ping'){
 		if (msg.channel.name == 'verify'){
@@ -756,14 +754,22 @@ client.on('message', msg =>{
 									.then(()=>{
 										msg.channel.awaitMessages(filter2, {max:1, time:10000, errors: ["time"]})
 											.then((collected2)=> {
-												if (body[randomizer].answer == collected2.first().content && collected2.first().author.id == msgid){
+												if (msgid != collected2.first().author.id){
+													msg.channel.send('I didn\'t ask you '+collected2.first().author.toString()+'.\nIts now cancelled.')
+													return
+												}
+												if (body[randomizer].answer == collected2.first().content){
+													console.log(collected2.first().author.id)
 													msg.channel.send("Your answer is correct!!!!!")
 												} else {
 													msg.channel.send('Your answer is wrong')
 												}
 											})
-											.catch("Looks like you didn't finish in time...")
+											.catch(()=> {
+												msg.reply('Looks like you didn\'t finished in time....')
+											})
 									})
+									.catch(console.error)
 							})
 
 
@@ -814,9 +820,11 @@ client.on('message', msg =>{
 	}
 
 
-	if (msg.author.bot == true && msg.channel.name != 'bot-commands'){
+	if (msg.author.bot == true && !channels.some(r => msg.channel.name.includes(r)) && msg.author.id != '799179572108853279'){
+		console.log(channels.some(r => msg.channel.name.includes(r)))
 		msg.delete({timeout:1000})
-		msg.channel.send('Bot message has been deleted. Don\'t use commands here.').then(r => {r.delete({timeout:2000})})
+		msg.channel.send('Bot message has been deleted. Don\'t use commands here.').then(r => {r.delete({timeout:3000})})
+		//824316488051064913
 	}
 
 	// SPAM FOR MEE9 rank
@@ -826,6 +834,7 @@ client.on('message', msg =>{
 })
 
 client.login(token).catch(console.error)
+
 
 
 // UUID Examples
