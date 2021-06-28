@@ -21,6 +21,7 @@ let animelist = ['AkiraKogami.jpg', 'Ayaki.png', 'Chika.jpg', 'Jasmine.jpg', 'Ic
 let animename = ['Akira Kogami', 'Kamisato Ayaka', 'Chika Fujiwara', 'Jasmine Kashiro', 'Ichika Nakano', 'Kirara Bernstein', 'Kyouko Hori', 'Makina Irisu', 'Rem', 'Remilia Scarlet', 'Shiro', 'Yoshino Himekawa','Ai Hayasaka', 'Emilia', 'Kaguya Shinomiya', 'Megumin', 'Ram']
 console.log(animename.length, animelist.length)
 let randomized;
+let randomizer
 let randomized2;
 let randomhypixel;
 let randomsweardetect;
@@ -94,7 +95,11 @@ client.on('message', msg =>{
 	const command = isCommand(msg.content)
 	const messages = msg.content
 	const owner = msg.author.id
-	// BLOCK
+	// Message deleter for verify // Only random texts
+	if (msg.channel.name == 'verify' && command != 'verify'){
+		msg.delete()
+	}
+	// MESSAGE
 	if (command == 'ping'){
 		if (msg.channel.name == 'verify'){
 			return
@@ -594,7 +599,7 @@ client.on('message', msg =>{
 		if (isNaN(combatlvl)){
 			errors.push('Combat Level')
 		}
-		execute
+		
 		console.log(errors.length)
 
 		if (errors.length != 0){
@@ -605,8 +610,10 @@ client.on('message', msg =>{
 
 		if (combatlvl > 60){
 			msg.channel.send('Combat level is too high')
+			return
 		} else if (combatlvl < 1){
 			msg.channel.send('Combat level too low')
+			return
 		}
 
 		if (weapondamage < 0 || strength < 0){
@@ -699,7 +706,83 @@ client.on('message', msg =>{
 				}
 			})
 		})
-	} 
+	} else if (command == 'test'){
+		const filter = response => {
+			return response.content
+		}
+
+		msg.channel.send('Say something and i\'ll say what you said.')
+			.then(()=>{
+				msg.channel.awaitMessages(filter, {max:1, time:20000, errors: ["time"]})
+					.then(collected => {
+						msg.channel.send('You said '+collected.first().content)
+					})
+					.catch(collected => {
+						msg.channel.send('No one say something :frowning:')
+					})
+			})
+	} else if (command == 'math'){
+		const filter = response => {
+			return response.content
+		}
+		const filter2 = response => {
+			return response.content
+		}
+
+		let difficulty
+		let msgid = msg.author.id
+
+		let answer
+		let question
+		let theiranswer
+
+		msg.channel.send('How hard? Is it Easy, Normal or Hard')
+			.then(()=>{
+				msg.channel.awaitMessages(filter, {max:1, time:10000, errors: ["time"]})
+					.then(collected => {
+						difficulty = collected.first().content.toLowerCase()
+						if (difficulty == 'easy' && msgid == collected.first().author.id){
+							
+							request({
+								method: 'get',
+								url: 'https://waifupictures.000webhostapp.com/easy.json',
+								json: true
+							}, (err,req,body)=> {
+
+								randomizer = Math.floor(Math.random() * body.length)
+								question = body[randomizer].question
+								answer = body[randomizer].answer
+								msg.channel.send(question)
+									.then(()=>{
+										msg.channel.awaitMessages(filter2, {max:1, time:10000, errors: ["time"]})
+											.then((collected2)=> {
+												if (body[randomizer].answer == collected2.first().content && collected2.first().author.id == msgid){
+													msg.channel.send("Your answer is correct!!!!!")
+												} else {
+													msg.channel.send('Your answer is wrong')
+												}
+											})
+											.catch("Looks like you didn't finish in time...")
+									})
+							})
+
+
+
+
+
+						} else if (difficulty == 'normal' && msgid == collected.first().author.id){
+							msg.channel.send('Sorry normal is not yet out. :(')
+						} else if (difficulty == 'hard' && msgid == collected.first().author.id){
+							msg.channel.send('Not coming soon.')
+						} else {
+							msg.channel.send(difficulty + ' is not an option.')
+						}
+					})
+					.catch(collected => {
+						msg.channel.send('You didn\'t respond in 10 seconds. :sob:')
+					})
+			})
+	}
 
 	// MY COMMANDS
 	if (command == 'delete'){
@@ -730,12 +813,17 @@ client.on('message', msg =>{
 		msg.channel.bulkDelete(num)
 	}
 
+
+	if (msg.author.bot == true && msg.channel.name != 'bot-commands'){
+		msg.delete({timeout:1000})
+		msg.channel.send('Bot message has been deleted. Don\'t use commands here.').then(r => {r.delete({timeout:2000})})
+	}
+
 	// SPAM FOR MEE9 rank
 	if (command == 'del'){
 		msg.delete({timeout:250})
 	}
 })
-
 
 client.login(token).catch(console.error)
 
