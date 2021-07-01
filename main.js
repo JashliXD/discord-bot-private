@@ -2,7 +2,7 @@
 const request = require('request');
 const discord = require('discord.js');
 const client = new discord.Client();
-const dotenv = require('dotenv').config()
+//const dotenv = require('dotenv').config()
 
 let api = process.env.api
 let token = process.env.token
