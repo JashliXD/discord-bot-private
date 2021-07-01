@@ -2,7 +2,7 @@
 const request = require('request');
 const discord = require('discord.js');
 const client = new discord.Client();
-//const dotenv = require('dotenv').config()
+const dotenv = require('dotenv').config()
 
 let api = process.env.api
 let token = process.env.token
@@ -720,12 +720,6 @@ client.on('message', msg =>{
 					})
 			})
 	} else if (command == 'math'){
-		const filter = response => {
-			return response.content
-		}
-		const filter2 = response => {
-			return response.content
-		}
 
 		let difficulty
 		let msgid = msg.author.id
@@ -736,10 +730,10 @@ client.on('message', msg =>{
 
 		msg.channel.send('How hard? Is it Easy, Normal or Hard')
 			.then(()=>{
-				msg.channel.awaitMessages(filter, {max:1, time:10000, errors: ["time"]})
+				msg.channel.awaitMessages(m => m.author.id === msgid, {max:1, time:10000, errors: ["time"]})
 					.then(collected => {
 						difficulty = collected.first().content.toLowerCase()
-						if (difficulty == 'easy' && msgid == collected.first().author.id){
+						if (difficulty == 'easy'){
 							
 							request({
 								method: 'get',
@@ -752,17 +746,13 @@ client.on('message', msg =>{
 								answer = body[randomizer].answer
 								msg.channel.send(question)
 									.then(()=>{
-										msg.channel.awaitMessages(filter2, {max:1, time:10000, errors: ["time"]})
+										msg.channel.awaitMessages(m => m.author.id === msgid, {max:1, time:10000, errors: ["time"]})
 											.then((collected2)=> {
-												if (msgid != collected2.first().author.id){
-													msg.channel.send('I didn\'t ask you '+collected2.first().author.toString()+'.\nIts now cancelled.')
-													return
-												}
 												if (body[randomizer].answer == collected2.first().content){
 													console.log(collected2.first().author.id)
 													msg.channel.send("Your answer is correct!!!!!")
 												} else {
-													msg.channel.send('Your answer is wrong')
+													msg.channel.send('Your answer is wrong. :pensive:')
 												}
 											})
 											.catch(()=> {
@@ -771,13 +761,33 @@ client.on('message', msg =>{
 									})
 									.catch(console.error)
 							})
-
-
-
-
-
 						} else if (difficulty == 'normal' && msgid == collected.first().author.id){
-							msg.channel.send('Sorry normal is not yet out. :(')
+							request({
+								method: 'get',
+								url: 'https://waifupictures.000webhostapp.com/normal.json',
+								json: true
+							}, (err,req,body)=> {
+
+								randomizer = Math.floor(Math.random() * body.length)
+								question = body[randomizer].question
+								answer = body[randomizer].answer
+								msg.channel.send(question)
+									.then(()=>{
+										msg.channel.awaitMessages(m => m.author.id === msgid, {max:1, time:10000, errors: ["time"]})
+											.then((collected2)=> {
+												if (body[randomizer].answer == collected2.first().content){
+													console.log(collected2.first().author.id)
+													msg.channel.send("Your answer is correct!!!!!")
+												} else {
+													msg.channel.send('Your answer is wrong. :pensive:')
+												}
+											})
+											.catch(()=> {
+												msg.reply('Looks like you didn\'t finished in time....')
+											})
+									})
+									.catch(console.error)
+							})
 						} else if (difficulty == 'hard' && msgid == collected.first().author.id){
 							msg.channel.send('Not coming soon.')
 						} else {
@@ -788,6 +798,12 @@ client.on('message', msg =>{
 						msg.channel.send('You didn\'t respond in 10 seconds. :sob:')
 					})
 			})
+	} else if (command == 'd' || command == 'dungeon' || command == 'dung'){
+		let cute_name;
+		let name;
+		let catamultiplier = 1
+
+
 	}
 
 	// MY COMMANDS
