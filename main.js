@@ -17,7 +17,7 @@ let jokeapi = 'https://icanhazdadjoke.com/'
 
 let remember = []
 
-let url = 'https://waifupictures.000webhostapp.com/'
+let url = 'https://waifupictures.000webhostapp.com/waifu/'
 let animelist = ['AkiraKogami.jpg', 'Ayaki.png', 'Chika.jpg', 'Jasmine.jpg', 'Ichika.png', 'KiraraBernstein.jpg', 'Kyouko.jpg', 'Makina_Irisu.png', 'Rem.jpg', 'REMILIA_SCARLET.jpg', 'Shiro.png', 'Yoshino.png','Hayasaka.png','Emilia.png','Kaguya.jpg','Megumin.jpg','Ram.png']
 let animename = ['Akira Kogami', 'Kamisato Ayaka', 'Chika Fujiwara', 'Jasmine Kashiro', 'Ichika Nakano', 'Kirara Bernstein', 'Kyouko Hori', 'Makina Irisu', 'Rem', 'Remilia Scarlet', 'Shiro', 'Yoshino Himekawa','Ai Hayasaka', 'Emilia', 'Kaguya Shinomiya', 'Megumin', 'Ram']
 console.log(animename.length, animelist.length)
@@ -69,7 +69,7 @@ function damageOutput(num){
 		return num
 	}
 }
-let mathurl = url
+let mathurl = 'https://waifupictures.000webhostapp.com/'
 let mathjson = ["ejson1.json","normaljson2.json","hjson3.json"]
 function isitalic(text){
 	if(text.startsWith('_') && text.endsWith('_')){
