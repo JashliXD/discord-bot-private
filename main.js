@@ -2,7 +2,7 @@
 const request = require('request');
 const discord = require('discord.js');
 const client = new discord.Client();
-//const dotenv = require('dotenv').config()
+const dotenv = require('dotenv').config()
 
 let api = process.env.api
 let token = process.env.token
@@ -16,7 +16,6 @@ let prefix = '?';
 let jokeapi = 'https://icanhazdadjoke.com/'
 
 let remember = []
-
 
 let url = 'https://waifupictures.000webhostapp.com/waifu/'
 let animelist = ['AkiraKogami.jpg', 'Ayaki.png', 'Chika.jpg', 'Jasmine.jpg', 'Ichika.png', 'KiraraBernstein.jpg', 'Kyouko.jpg', 'Makina_Irisu.png', 'Rem.jpg', 'REMILIA_SCARLET.jpg', 'Shiro.png', 'Yoshino.png','Hayasaka.png','Emilia.png','Kaguya.jpg','Megumin.jpg','Ram.png']
@@ -70,6 +69,8 @@ function damageOutput(num){
 		return num
 	}
 }
+let mathurl = url
+let mathjson = ["ejson1.json","normaljson2.json","hjson3.json"]
 function isitalic(text){
 	if(text.startsWith('_') && text.endsWith('_')){
 		const str = '\\'+text
@@ -737,7 +738,7 @@ client.on('message', msg =>{
 							
 							request({
 								method: 'get',
-								url: 'https://waifupictures.000webhostapp.com/easy.json',
+								url: mathurl+mathjson[0],
 								json: true
 							}, (err,req,body)=> {
 
@@ -746,9 +747,9 @@ client.on('message', msg =>{
 								answer = body[randomizer].answer
 								msg.channel.send(question)
 									.then(()=>{
-										msg.channel.awaitMessages(m => m.author.id === msgid, {max:1, time:10000, errors: ["time"]})
+										msg.channel.awaitMessages(m => m.author.id === msgid, {max:1, time:30000, errors: ["time"]})
 											.then((collected2)=> {
-												if (body[randomizer].answer == collected2.first().content){
+												if (body[randomizer].answer.some(r => collected2.first().content.includes(r))){
 													console.log(collected2.first().author.id)
 													msg.channel.send("Your answer is correct!!!!!")
 												} else {
@@ -756,7 +757,7 @@ client.on('message', msg =>{
 												}
 											})
 											.catch(()=> {
-												msg.reply('Looks like you didn\'t finished in time....')
+												msg.reply('Looks like you didn\'t finish in time.... (30 seconds)')
 											})
 									})
 									.catch(console.error)
@@ -764,7 +765,7 @@ client.on('message', msg =>{
 						} else if (difficulty == 'normal' && msgid == collected.first().author.id){
 							request({
 								method: 'get',
-								url: 'https://waifupictures.000webhostapp.com/normal.json',
+								url: mathurl+mathjson[1],
 								json: true
 							}, (err,req,body)=> {
 
@@ -773,23 +774,47 @@ client.on('message', msg =>{
 								answer = body[randomizer].answer
 								msg.channel.send(question)
 									.then(()=>{
-										msg.channel.awaitMessages(m => m.author.id === msgid, {max:1, time:10000, errors: ["time"]})
+										msg.channel.awaitMessages(m => m.author.id === msgid, {max:1, time:60000, errors: ["time"]})
 											.then((collected2)=> {
-												if (body[randomizer].answer == collected2.first().content){
-													console.log(collected2.first().author.id)
+												if (body[randomizer].answer.some(r => collected2.first().content.includes(r))){
 													msg.channel.send("Your answer is correct!!!!!")
 												} else {
 													msg.channel.send('Your answer is wrong. :pensive:')
 												}
 											})
 											.catch(()=> {
-												msg.reply('Looks like you didn\'t finished in time....')
+												msg.reply('Looks like you didn\'t finish in time.... (60 seconds)')
 											})
 									})
 									.catch(console.error)
 							})
 						} else if (difficulty == 'hard' && msgid == collected.first().author.id){
-							msg.channel.send('Not coming soon.')
+							request({
+								method: 'get',
+								url: mathurl+mathjson[2],
+								json: true
+							}, (err,req,body)=> {
+								randomizer = Math.floor(Math.random() * body.length)
+								question = body[randomizer].question
+								answer = body[randomizer].answer
+								msg.channel.send(question)
+									.then(()=> {
+										msg.channel.awaitMessages(m => m.author.id === msgid, {max:1,time:90000,errors:["time"]})
+											.then(collected2=> {
+												if (answer.some(r => collected2.first().content.includes(r))){
+													msg.channel.send("Congratulations. Your answer is")
+													setTimeout(()=> {msg.channel.send("Correct!!! :partying_face:")},2000)
+												} else {
+													msg.channel.send("Congratulations. Your answer is")
+													setTimeout(()=> {msg.channel.send("Wrong!!! :satisfied:")},2000)
+												}
+											})
+											.catch(() => {
+												msg.reply("Looks like you didn't finish in time.... (90 seconds)")
+											})
+									})
+
+							})
 						} else {
 							msg.channel.send(difficulty + ' is not an option.')
 						}
@@ -799,10 +824,26 @@ client.on('message', msg =>{
 					})
 			})
 	} else if (command == 'd' || command == 'dungeon' || command == 'dung'){
+		const filter = respond => {
+			return respond.author.id === msg.author.id
+		}
 		let cute_name;
 		let name;
 		let catamultiplier = 1
-
+		msg.channel.send("What's your IGN?")
+			.then(()=> {
+				msg.channel.awaitMessages(filter, {max:1,time:30000,errors:["time"]})
+					.then(collected => {
+						name = collected.first().content
+						msg.channel.send("What's the profile name or fruit name")
+							.then(()=> {
+								msg.channel.awaitMessages(filter, {max:1,time:30000,errors:["time"]})
+									.then(collected1=> {
+										cute_name = collected1.first().content
+									})
+							})
+					})
+			})
 
 	}
 
