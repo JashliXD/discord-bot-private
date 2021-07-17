@@ -69,7 +69,7 @@ function damageOutput(num){
 		return num
 	}
 }
-let mathurl = 'https://waifupictures.000webhostapp.com/'
+let mathurl = url
 let mathjson = ["ejson1.json","normaljson2.json","hjson3.json"]
 function isitalic(text){
 	if(text.startsWith('_') && text.endsWith('_')){
@@ -569,7 +569,7 @@ client.on('message', msg =>{
 		}
 		const rawArray = messages.substr(messages.toLowerCase().indexOf('damage') + 7)
 		if (rawArray == ''){
-			msg.channel.send(`You forgot to Weapon Damage, Strength, Crit Damage, and Multiplier. Example: ${prefix}damage [Damage],[Strength],[CritDamage],[Combat Level]`)
+			msg.channel.send(`You forgot to add Weapon Damage, Strength, Crit Damage, and Multiplier. Example: ${prefix}damage [Damage],[Strength],[CritDamage],[Combat Level]`)
 			return
 		}
 		console.log(rawArray)
@@ -791,7 +791,7 @@ client.on('message', msg =>{
 						} else if (difficulty == 'hard' && msgid == collected.first().author.id){
 							request({
 								method: 'get',
-								url: mathurl+mathjson[2],
+								url: '',
 								json: true
 							}, (err,req,body)=> {
 								randomizer = Math.floor(Math.random() * body.length)
@@ -829,7 +829,19 @@ client.on('message', msg =>{
 		}
 		let cute_name;
 		let name;
-		let catamultiplier = 1
+
+		let playercatalevel
+		let playercataxp
+		let playercumulative
+
+		let desirecatalevel
+
+		let desirecataxp
+		let cata50xpleft
+		let playernextlevel
+		let playernextlevelcataxp
+
+		const cumulative = [50,75,110,160,230,330,470,670,950,1340,1890,2665,3760,5260,7380,10300,14400,20000,27600,38000,52500,71500,97000,132000,180000,243000,328000,445000,600000,800000,1065000,1410000,1900000,2500000,3300000,4300000,5600000,7200000,9200000,12000000,15000000,19000000,24000000,30000000,38000000,48000000,60000000,75000000,93000000,116250000]
 		msg.channel.send("What's your IGN?")
 			.then(()=> {
 				msg.channel.awaitMessages(filter, {max:1,time:30000,errors:["time"]})
@@ -840,6 +852,57 @@ client.on('message', msg =>{
 								msg.channel.awaitMessages(filter, {max:1,time:30000,errors:["time"]})
 									.then(collected1=> {
 										cute_name = collected1.first().content
+										msg.channel.send('What catacomb level you wan\'t to get?')
+											.then(()=> {
+												msg.channel.awaitMessages(filter, {max:1,time:30000, errors:["time"]})
+													.then(collected2 => {
+														request({
+															method: 'get',
+															url: 'https://sky.shiiyu.moe/api/v2/dungeons/'+name+'/'+cute_name,
+															json: true
+														}, (err,req,body)=> {
+
+															if (body.error != undefined){
+																msg.channel.send(body.error)
+																return
+															}
+
+															desirecatalevel = parseInt(collected2.first().content)
+															if (isNaN(desirecatalevel)){
+																msg.channel.send('Desire catalevel is NaN')
+																return
+															} else if (desirecatalevel > 50 || desirecatalevel < 1){
+																msg.channel.send('Only catacomb 1-50')
+																return
+															}
+															playercatalevel = body.dungeons.catacombs.level.level
+															playernextlevel = playercatalevel + 1
+
+															playercataxp = body.dungeons.catacombs.level.xpCurrent
+
+															playercumulative = body.dungeons.catacombs.level.xp
+															
+
+															desirecataxp = cumulative[desirecatalevel-1] - playercumulative
+															cata50xpleft = cumulative[49] - playercumulative
+															playernextlevelcataxp = cumulative[playernextlevel-1] - playercataxp
+
+															if (playercatalevel > desirecatalevel){
+																msg.channel.send('Desire catacombs level can\'t be lower than your catacombs level')
+																return
+															}
+
+															const embed = new discord.MessageEmbed()
+																.setTitle("Hypixel Skyblock Dungeons Calculator")
+																.addFields(
+																	{name: "Catacombs **"+playercatalevel+"** to **"+desirecatalevel+"**", value:desirecataxp.toFixed(2)+ " cata xp needed", inline:true},
+																	{name: "Catacombs **"+playercatalevel+"** to **"+playernextlevel+"**", value:playernextlevelcataxp.toFixed(2)+ " cata xp needed", inline:true},
+																	{name: "Catacombs **"+playercatalevel+"** to **50**", value:cata50xpleft.toFixed(2)+ " cata xp needed",inline:true}
+																	)
+															msg.channel.send(embed)
+														})
+													})
+											})
 									})
 							})
 					})
@@ -888,6 +951,17 @@ client.on('message', msg =>{
 	if (command == 'del'){
 		msg.delete({timeout:250})
 	}
+	if (command == 'dog'){
+		request({
+			method: 'get',
+			url: "https://dog.ceo/api/breeds/image/random",
+			json: true
+		}, (err,req,body)=> {
+			msg.channel.send("Woof Woof *Bark noises")
+			msg.channel.send(body.message)
+		})
+	}
+
 })
 
 client.login(token).catch(console.error)
