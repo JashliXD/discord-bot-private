@@ -93,7 +93,7 @@ function isCommand(string){
 		return null;
 	}
 }
-
+let active = false
 client.on('message', msg =>{
 	const command = isCommand(msg.content)
 	const messages = msg.content
@@ -937,6 +937,24 @@ client.on('message', msg =>{
 
 		msg.channel.send('You deleted '+c+' message').then(msg => {msg.delete({timeout: 2000})})
 		msg.channel.bulkDelete(num)
+	} else if (command == 'dadjoke'){
+		if (owner != ownerID){
+			msg.channel.send("Sorry, you don't have permission to use this command")
+			return
+		}
+		const option = messages.substr(messages.toLowerCase().indexOf('dadjoke') + 8)
+		if (option == ''){
+			msg.channel.send("My Owner you forgot true or false.")
+		}
+		if (option == 'false'){
+			active = false
+			msg.channel.send("dad joke is now FALSE")
+			return
+		} else if (option == 'true'){
+			active = true
+			msg.channel.send("dad joke is now TRUE")
+			return
+		}
 	}
 
 
@@ -957,9 +975,33 @@ client.on('message', msg =>{
 			url: "https://dog.ceo/api/breeds/image/random",
 			json: true
 		}, (err,req,body)=> {
-			msg.channel.send("Woof Woof *Dog noises")
+			msg.channel.send("Woof Woof *Bark noises")
 			msg.channel.send(body.message)
 		})
+	}
+	let str = msg.content.split(' ')
+	if (msg.content.toLowerCase().startsWith('im') && active){
+
+		// checker
+		for (i in str){
+			if (str[i].toLowerCase() == 'idiot'){
+				return
+			} else if (str[i].toLowerCase() == 'stupid'){
+				return
+			} else if (str[i].toLowerCase() == 'stopid'){
+				return
+			} else if (str[i].toLowerCase() == 'idiut'){
+				return
+			} else if (str[i].toLowerCase() == 'idi-ot'){
+				return
+			} else if (str[i].toLowerCase() == 'i-diot'){
+				return
+			} else if (str[i].toLowerCase() == 'idi-ot'){
+				return
+			}
+		}
+
+		msg.channel.send('Hi' +msg.content.slice(2,msg.content.length)+ " Im Kaguya :joy_cat:")
 	}
 
 })
