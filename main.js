@@ -957,7 +957,7 @@ client.on('message', msg =>{
 			url: "https://dog.ceo/api/breeds/image/random",
 			json: true
 		}, (err,req,body)=> {
-			msg.channel.send("Woof Woof *Bark noises")
+			msg.channel.send("Woof Woof *Dog noises")
 			msg.channel.send(body.message)
 		})
 	}
