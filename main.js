@@ -937,11 +937,7 @@ client.on('message', msg =>{
 
 		msg.channel.send('You deleted '+c+' message').then(msg => {msg.delete({timeout: 2000})})
 		msg.channel.bulkDelete(num)
-	} else if (command == 'dadjoke'){
-		if (owner != ownerID){
-			msg.channel.send("Sorry, you don't have permission to use this command")
-			return
-		}
+	} else if (command == 'dadjoke' && msg.guild.roles.cache.has(824319592406581298)){
 		const option = messages.substr(messages.toLowerCase().indexOf('dadjoke') + 8)
 		if (option == ''){
 			msg.channel.send("My Owner you forgot true or false.")
