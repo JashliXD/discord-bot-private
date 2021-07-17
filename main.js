@@ -852,7 +852,7 @@ client.on('message', msg =>{
 								msg.channel.awaitMessages(filter, {max:1,time:30000,errors:["time"]})
 									.then(collected1=> {
 										cute_name = collected1.first().content
-										msg.channel.send('What catacomb level you wan\'t to get?')
+										msg.channel.send('What catacomb level you want to get?')
 											.then(()=> {
 												msg.channel.awaitMessages(filter, {max:1,time:30000, errors:["time"]})
 													.then(collected2 => {
