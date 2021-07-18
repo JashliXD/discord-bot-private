@@ -285,10 +285,7 @@ client.on('message', msg =>{
 		}
 		const newprefix = messages.substr(messages.toLowerCase().indexOf('prefix') + 7);
 		console.log("Someone is trying to change prefix. Their ID: "+msg.author.id)
-		if (owner != ownerID){
-			msg.channel.send("Sorry, you don't have permission to use this command")
-			return
-		}
+		isOwner(msg)
 		if (newprefix.length != 1){
 			msg.channel.send("Can't man you said only 1 in length")
 			return
@@ -521,10 +518,8 @@ client.on('message', msg =>{
 		}
 		msg.channel.send(version)
 	} else if (command == 'remember'){
+		isOwner(msg)
 		if (msg.channel.name == 'verify'){
-			return
-		}
-		if (owner != ownerID){
 			return
 		}
 		const key = messages.substr(messages.toLowerCase().indexOf('remember') + 9)
@@ -538,9 +533,7 @@ client.on('message', msg =>{
 		if (msg.channel.name == 'verify'){
 			return
 		}
-		if (owner != ownerID){
-			return
-		}
+		isOwner(msg)
 		const clear = messages.substr(messages.toLowerCase().indexOf('database') + 9)
 		if (clear == ''){
 			if (remember == ''){
@@ -923,10 +916,6 @@ client.on('message', msg =>{
 	if (command == 'delete'){
 		isOwner(msg)
 		const c = messages.substr(messages.toLowerCase().indexOf('delete')+7)
-		if (owner != ownerID){
-			msg.channel.send("Sorry, you don't have permission to use this command")
-			return
-		}
 		if (c == ''){
 			msg.channel.send('You didn\'t put anything').then(msg=> {msg.delete()})
 			return
