@@ -9,6 +9,7 @@ let token = process.env.token
 let ownerID = process.env.ownerID
 
 let channels = require('./channel.json')
+let mods = require('./owner.json')
 
 let version = '1.1.9'
 
@@ -43,6 +44,13 @@ function empty(array){
 	}
 }
 
+function isOwner(msg){
+	if (!mods.some(r => msg.author.id.includes(r))){
+		msg.channel.send("You don't have permission.")
+		return
+	}
+}
+
 function m(n,d){var x=(''+n).length,p=Math.pow,d=p(10,d)
 x-=x%3
 return Math.round(n*d/p(10,x))/d+" kMBTQE"[x/3]}
@@ -69,6 +77,7 @@ function damageOutput(num){
 		return num
 	}
 }
+let strictvariable = true
 let mathurl = url
 let mathjson = ["ejson1.json","normaljson2.json","hjson3.json"]
 function isitalic(text){
@@ -912,6 +921,7 @@ client.on('message', msg =>{
 
 	// MY COMMANDS
 	if (command == 'delete'){
+		isOwner(msg)
 		const c = messages.substr(messages.toLowerCase().indexOf('delete')+7)
 		if (owner != ownerID){
 			msg.channel.send("Sorry, you don't have permission to use this command")
@@ -937,10 +947,11 @@ client.on('message', msg =>{
 
 		msg.channel.send('You deleted '+c+' message').then(msg => {msg.delete({timeout: 2000})})
 		msg.channel.bulkDelete(num)
-	} else if (command == 'dadjoke' && msg.member.roles.cache.has(824319592406581298)){
+	} else if (command == 'dadjoke'){
+		isOwner(msg)
 		const option = messages.substr(messages.toLowerCase().indexOf('dadjoke') + 8)
 		if (option == ''){
-			msg.channel.send("My Owner you forgot true or false.")
+			msg.channel.send("You forgot true or false.")
 		}
 		if (option == 'false'){
 			active = false
@@ -953,11 +964,33 @@ client.on('message', msg =>{
 		}
 	}
 
+	if (command == 'strict'){
+		isOwner(msg)
+		const option = messages.substr(messages.toLowerCase().indexOf('strict') + 7)
+		if (option == 'open'){
+			strictvariable = true
+			console.log('strict On')
+			msg.delete()
+		} else if (option == 'close'){
+			strictvariable = false
+			console.log('strict Off')
+			msg.delete()
+		} else {
+			msg.delete()
+		}
+	}
+
 
 	if (msg.author.bot == true && !channels.some(r => msg.channel.name.includes(r)) && msg.author.id != '799179572108853279'){
-		console.log(channels.some(r => msg.channel.name.includes(r)))
-		msg.delete({timeout:1000})
-		msg.channel.send('Bot message has been deleted. Don\'t use commands here.').then(r => {r.delete({timeout:3000})})
+		if (strictvariable){
+			console.log(channels.some(r => msg.channel.name.includes(r)))
+			msg.delete({timeout:1000})
+			msg.channel.send('Bot message has been deleted. Don\'t use commands here.').then(r => {r.delete({timeout:3000})})
+			return
+		} else {
+			return
+		}
+		
 		//824316488051064913
 	}
 
@@ -993,6 +1026,10 @@ client.on('message', msg =>{
 			} else if (str[i].toLowerCase() == 'i-diot'){
 				return
 			} else if (str[i].toLowerCase() == 'idi-ot'){
+				return
+			} else if (str[i].toLowerCase() == 'retarded'){
+				return
+			} else if (str[i].toLowerCase() == 'retard'){
 				return
 			}
 		}
