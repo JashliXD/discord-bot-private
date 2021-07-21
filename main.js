@@ -132,24 +132,6 @@ function isCommand(string){
 }
 let active = false
 
-let welcomepickedsentence
-let stringforwelcome
-
-client.on('guildMemberAdd', (member)=> {
-	welcomepickedsentence = welcomearray[Math.floor(Math.random() * 9)]
-	stringforwelcome = welcomepickedsentence.replace("&user&", member)
-	client.channels.cache.get('866980767099912213').send(stringforwelcome)
-})
-
-let farewellpickedsentence
-let stringforfarewell
-
-client.on('guildMemberRemove', (member)=> {
-	farewellpickedsentence = farewellarray[Math.floor(Math.random() * 3)]
-	stringforfarewell = farewellpickedsentence.replace("&user&", member)
-	client.channels.cache.get('866980767099912213').send(stringforfarewell)
-})
-
 client.on('message', msg =>{
 	const command = isCommand(msg.content)
 	const messages = msg.content
@@ -1080,6 +1062,24 @@ client.on('message', msg =>{
 			msg.delete()
 		}
 	}
+})
+
+let welcomepickedsentence
+let stringforwelcome
+
+client.on('guildMemberAdd', (member)=> {
+	welcomepickedsentence = welcomearray[Math.floor(Math.random() * 9)]
+	stringforwelcome = welcomepickedsentence.replace("&user&", member)
+	client.channels.cache.get('799181059908567073').send(stringforwelcome)
+})
+
+let farewellpickedsentence
+let stringforfarewell
+
+client.on('guildMemberRemove', (member)=> {
+	farewellpickedsentence = farewellarray[Math.floor(Math.random() * 3)]
+	stringforfarewell = farewellpickedsentence.replace("&user&", member)
+	client.channels.cache.get('799181059908567073').send(stringforfarewell)
 })
 
 client.login(token).catch(console.error)
