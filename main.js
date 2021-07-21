@@ -1,7 +1,8 @@
 "use strict";
 const request = require('request');
 const discord = require('discord.js');
-const client = new discord.Client();
+const intents = ["GUILDS", "GUILD_MEMBERS"];
+const client = new discord.Client({intents: intents, ws:{intents: intents}});
 //const dotenv = require('dotenv').config()
 
 let api = process.env.api
@@ -23,6 +24,22 @@ let url = 'https://waifupictures.000webhostapp.com/waifu/'
 let murl = 'https://waifupictures.000webhostapp.com/'
 let animelist = ['AkiraKogami.jpg', 'Ayaki.png', 'Chika.jpg', 'Jasmine.jpg', 'Ichika.png', 'KiraraBernstein.jpg', 'Kyouko.jpg', 'Makina_Irisu.png', 'Rem.jpg', 'REMILIA_SCARLET.jpg', 'Shiro.png', 'Yoshino.png','Hayasaka.png','Emilia.png','Kaguya.jpg','Megumin.jpg','Ram.png']
 let animename = ['Akira Kogami', 'Kamisato Ayaka', 'Chika Fujiwara', 'Jasmine Kashiro', 'Ichika Nakano', 'Kirara Bernstein', 'Kyouko Hori', 'Makina Irisu', 'Rem', 'Remilia Scarlet', 'Shiro', 'Yoshino Himekawa','Ai Hayasaka', 'Emilia', 'Kaguya Shinomiya', 'Megumin', 'Ram']
+const welcomearray = [
+	"Everyone welcome &user&!",
+	"&user& just showed up!",
+	"Hey Hey &user&. Welcome to **McLaren's Pub**!",
+	"Hello &user&, Welcome to **McLaren's Pub**!",
+	"Glad you're here, &user&!",
+	"Hello &user&, Welcome to Family Friendly Server called **McLaren's Pub**!!",
+	"Ey &user& just joined the server!",
+	"Welcome, &user&. We hope you brought pizza!!",
+	"Welcome &user&!!"
+]
+const farewellarray =[
+	"&user& just left the server. :sob:",
+	"Bye Bye &user&. :sob:",
+	"&user& left. :sob:"
+]
 console.log(animename.length, animelist.length)
 let randomized;
 let randomizer
@@ -114,6 +131,25 @@ function isCommand(string){
 	}
 }
 let active = false
+
+let welcomepickedsentence
+let stringforwelcome
+
+client.on('guildMemberAdd', (member)=> {
+	welcomepickedsentence = welcomearray[Math.floor(Math.random() * 9)]
+	stringforwelcome = welcomepickedsentence.replace("&user&", member)
+	client.channels.cache.get('799181059908567073').send(stringforwelcome)
+})
+
+let farewellpickedsentence
+let stringforfarewell
+
+client.on('guildMemberRemove', (member)=> {
+	farewellpickedsentence = farewellarray[Math.floor(Math.random() * 3)]
+	stringforfarewell = farewellpickedsentence.replace("&user&", member)
+	client.channels.cache.get('799181059908567073').send(stringforfarewell)
+})
+
 client.on('message', msg =>{
 	const command = isCommand(msg.content)
 	const messages = msg.content
