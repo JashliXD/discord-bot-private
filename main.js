@@ -1,8 +1,7 @@
 "use strict";
 const request = require('request');
 const discord = require('discord.js');
-const intents = ["GUILDS", "GUILD_MEMBERS", "GUILD_MESSAGES", "DIRECT_MESSAGES"];
-const client = new discord.Client({intents: intents, ws:{intents: intents}});
+const client = new discord.Client();
 //const dotenv = require('dotenv').config()
 
 let api = process.env.api
