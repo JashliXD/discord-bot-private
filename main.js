@@ -10,6 +10,7 @@ let ownerID = process.env.ownerID
 
 let channels = require('./channel.json')
 let mods = require('./owner.json')
+let bots = require('./bot.json')
 
 let version = '1.1.9'
 
@@ -19,6 +20,7 @@ let jokeapi = 'https://icanhazdadjoke.com/'
 let remember = []
 
 let url = 'https://waifupictures.000webhostapp.com/waifu/'
+let murl = 'https://waifupictures.000webhostapp.com/'
 let animelist = ['AkiraKogami.jpg', 'Ayaki.png', 'Chika.jpg', 'Jasmine.jpg', 'Ichika.png', 'KiraraBernstein.jpg', 'Kyouko.jpg', 'Makina_Irisu.png', 'Rem.jpg', 'REMILIA_SCARLET.jpg', 'Shiro.png', 'Yoshino.png','Hayasaka.png','Emilia.png','Kaguya.jpg','Megumin.jpg','Ram.png']
 let animename = ['Akira Kogami', 'Kamisato Ayaka', 'Chika Fujiwara', 'Jasmine Kashiro', 'Ichika Nakano', 'Kirara Bernstein', 'Kyouko Hori', 'Makina Irisu', 'Rem', 'Remilia Scarlet', 'Shiro', 'Yoshino Himekawa','Ai Hayasaka', 'Emilia', 'Kaguya Shinomiya', 'Megumin', 'Ram']
 console.log(animename.length, animelist.length)
@@ -44,10 +46,19 @@ function empty(array){
 	}
 }
 
+function isBot(msg){
+	if (bots.some(r => msg.author.id.includes(r))){
+		return true
+	} else {
+		return false
+	}
+}
+
 function isOwner(msg){
-	if (!mods.some(r => msg.author.id.includes(r))){
-		msg.channel.send("You don't have permission.")
-		return
+	if (mods.some(r => msg.author.id.includes(r))){
+		return true
+	} else {
+		return false
 	}
 }
 
@@ -77,9 +88,9 @@ function damageOutput(num){
 		return num
 	}
 }
-let strictvariable = true
-let mathurl = url
-let mathjson = ["ejson1.json","normaljson2.json","hjson3.json"]
+let strictvariable = true;
+let mathurl = murl;
+let mathjson = ["ejson1.json","normaljson2.json","hjson3.json"];
 function isitalic(text){
 	if(text.startsWith('_') && text.endsWith('_')){
 		const str = '\\'+text
@@ -279,13 +290,12 @@ client.on('message', msg =>{
 		}
 		let mathsthing = Math.round(Math.random() * 100)
 		msg.channel.send("Congratulations, You've made "+mathsthing+ "M today.")
-	} else if (command == 'prefix'){
+	} else if (command == 'prefix' && isOwner(msg)){
 		if (msg.channel.name == 'verify'){
 			return
 		}
 		const newprefix = messages.substr(messages.toLowerCase().indexOf('prefix') + 7);
 		console.log("Someone is trying to change prefix. Their ID: "+msg.author.id)
-		isOwner(msg)
 		if (newprefix.length != 1){
 			msg.channel.send("Can't man you said only 1 in length")
 			return
@@ -374,7 +384,7 @@ client.on('message', msg =>{
 			url: jokeapi,
 			json: true
 		}, (err, req, body) => {
-			msg.channel.send(body.joke)
+			msg.channel.send(a.joke)
 		})
 	} else if (msg.content == 'I love you'){
 		if (msg.channel.name == 'verify'){
@@ -517,8 +527,7 @@ client.on('message', msg =>{
 			return
 		}
 		msg.channel.send(version)
-	} else if (command == 'remember'){
-		isOwner(msg)
+	} else if (command == 'remember' && isOwner(msg)){
 		if (msg.channel.name == 'verify'){
 			return
 		}
@@ -529,11 +538,10 @@ client.on('message', msg =>{
 
 		remember.push(key)
 		msg.channel.send('Added to database')
-	} else if (command == 'database'){
+	} else if (command == 'database' &&isOwner(msg)){
 		if (msg.channel.name == 'verify'){
 			return
 		}
-		isOwner(msg)
 		const clear = messages.substr(messages.toLowerCase().indexOf('database') + 9)
 		if (clear == ''){
 			if (remember == ''){
@@ -913,8 +921,7 @@ client.on('message', msg =>{
 	}
 
 	// MY COMMANDS
-	if (command == 'delete'){
-		isOwner(msg)
+	if (command == 'delete' && isOwner(msg)){
 		const c = messages.substr(messages.toLowerCase().indexOf('delete')+7)
 		if (c == ''){
 			msg.channel.send('You didn\'t put anything').then(msg=> {msg.delete()})
@@ -936,8 +943,7 @@ client.on('message', msg =>{
 
 		msg.channel.send('You deleted '+c+' message').then(msg => {msg.delete({timeout: 2000})})
 		msg.channel.bulkDelete(num)
-	} else if (command == 'dadjoke'){
-		isOwner(msg)
+	} else if (command == 'dadjoke' && isOwner(msg)){
 		const option = messages.substr(messages.toLowerCase().indexOf('dadjoke') + 8)
 		if (option == ''){
 			msg.channel.send("You forgot true or false.")
@@ -953,7 +959,7 @@ client.on('message', msg =>{
 		}
 	}
 
-	if (command == 'strict'){
+	if (command == 'strict' && isOwner(msg)){
 		isOwner(msg)
 		const option = messages.substr(messages.toLowerCase().indexOf('strict') + 7)
 		if (option == 'open'){
@@ -970,7 +976,7 @@ client.on('message', msg =>{
 	}
 
 
-	if (msg.author.bot == true && !channels.some(r => msg.channel.name.includes(r)) && msg.author.id != '799179572108853279'){
+	if (msg.author.bot == true && !channels.some(r => msg.channel.name.includes(r)) && !isBot(msg)){
 		if (strictvariable){
 			console.log(channels.some(r => msg.channel.name.includes(r)))
 			msg.delete({timeout:1000})
@@ -993,10 +999,11 @@ client.on('message', msg =>{
 			url: "https://dog.ceo/api/breeds/image/random",
 			json: true
 		}, (err,req,body)=> {
-			msg.channel.send("Woof Woof *Bark noises")
+			msg.channel.send("Woof Woof *Dog noises")
 			msg.channel.send(body.message)
 		})
 	}
+	// dad joke moment
 	let str = msg.content.split(' ')
 	if (msg.content.toLowerCase().startsWith('im') && active){
 
@@ -1025,7 +1032,18 @@ client.on('message', msg =>{
 
 		msg.channel.send('Hi' +msg.content.slice(2,msg.content.length)+ " Im Kaguya :joy_cat:")
 	}
-
+	// #count / only count bot can talk / delete user text if not numbers
+	if (msg.channel.name == 'counting'){
+		if (isBot(msg) && msg.author.bot == true){
+			return
+		} else if (!isBot(msg) && msg.author.bot == true){
+			msg.delete()
+		}
+		let number = Number(msg.content)
+		if (isNaN(number)){
+			msg.delete()
+		}
+	}
 })
 
 client.login(token).catch(console.error)
