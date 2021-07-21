@@ -1,7 +1,7 @@
 "use strict";
 const request = require('request');
 const discord = require('discord.js');
-const intents = ["GUILD_PRESENCES","GUILD_MEMBERS", "GUILD_MESSAGES", "GUILDS"]
+const intents = ["GUILD_MEMBERS", "GUILDS"]
 const client = new discord.Client({ws: {intents: intents}});
 //const dotenv = require('dotenv').config()
 
