@@ -1067,7 +1067,7 @@ client.on('message', msg =>{
 let welcomepickedsentence
 let stringforwelcome
 
-client.on('guildMemberAdd', (member)=> {
+client.on('guildMemberAdd', async (member)=> {
 	const channel = member.guild.channels.find(channel => channel.name == 'arrival-and-departures')
 	welcomepickedsentence = welcomearray[Math.floor(Math.random() * 9)]
 	stringforwelcome = welcomepickedsentence.replace("&user&", member)
@@ -1077,7 +1077,7 @@ client.on('guildMemberAdd', (member)=> {
 let farewellpickedsentence
 let stringforfarewell
 
-client.on('guildMemberRemove', (member)=> {
+client.on('guildMemberRemove', async (member)=> {
 	const channel = member.guild.channels.find(channel => channel.name == 'arrival-and-departures')
 	farewellpickedsentence = farewellarray[Math.floor(Math.random() * 3)]
 	stringforfarewell = farewellpickedsentence.replace("&user&", member)
