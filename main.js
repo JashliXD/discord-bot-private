@@ -1,8 +1,8 @@
 "use strict";
 const request = require('request');
 const discord = require('discord.js');
-const intents = ["GUILD_MEMBERS", "GUILDS"]
-const client = new discord.Client({ws: {intents: new discord.Intents(discord.Intents.ALL) }});
+const intents = ["GUILDS", "GUILD_MEMBERS", "GUILD_MESSAGES"];
+const client = new discord.Client({intents: intents, ws:{intents: intents}});
 //const dotenv = require('dotenv').config()
 
 let api = process.env.api
@@ -54,15 +54,6 @@ function unixtodate(unix){
 	return string
 }
 
-
-function empty(array){
-	if(array.length == 0){
-		return "No More :frowning:"
-	} else {
-		return array
-	}
-}
-
 function isBot(msg){
 	if (bots.some(r => msg.author.id.includes(r))){
 		return true
@@ -70,7 +61,6 @@ function isBot(msg){
 		return false
 	}
 }
-
 function isOwner(msg){
 	if (mods.some(r => msg.author.id.includes(r))){
 		return true
@@ -106,6 +96,7 @@ function damageOutput(num){
 	}
 }
 let strictvariable = true;
+let jumbleboolean = false;
 let mathurl = murl;
 let mathjson = ["ejson1.json","normaljson2.json","hjson3.json"];
 function isitalic(text){
@@ -130,12 +121,16 @@ function isCommand(string){
 		return null;
 	}
 }
-let active = false
 
 client.on('message', msg =>{
 	const command = isCommand(msg.content)
 	const messages = msg.content
 	const owner = msg.author.id
+	const mutedrole = msg.guild.roles.cache.get('873272754172997702')
+	if (msg.member.roles.cache.has(mutedrole.id)){
+		msg.delete()
+		return
+	}
 	// MESSAGE
 	if (command == 'ping'){
 		if (msg.channel.name == 'verify'){
@@ -748,194 +743,6 @@ client.on('message', msg =>{
 						msg.channel.send('No one say something :frowning:')
 					})
 			})
-	} else if (command == 'math'){
-
-		let difficulty
-		let msgid = msg.author.id
-
-		let answer
-		let question
-		let theiranswer
-
-		msg.channel.send('How hard? Is it Easy, Normal or Hard')
-			.then(()=>{
-				msg.channel.awaitMessages(m => m.author.id === msgid, {max:1, time:10000, errors: ["time"]})
-					.then(collected => {
-						difficulty = collected.first().content.toLowerCase()
-						if (difficulty == 'easy'){
-							
-							request({
-								method: 'get',
-								url: mathurl+mathjson[0],
-								json: true
-							}, (err,req,body)=> {
-
-								randomizer = Math.floor(Math.random() * body.length)
-								question = body[randomizer].question
-								answer = body[randomizer].answer
-								msg.channel.send(question)
-									.then(()=>{
-										msg.channel.awaitMessages(m => m.author.id === msgid, {max:1, time:30000, errors: ["time"]})
-											.then((collected2)=> {
-												if (body[randomizer].answer.some(r => collected2.first().content.includes(r))){
-													console.log(collected2.first().author.id)
-													msg.channel.send("Your answer is correct!!!!!")
-												} else {
-													msg.channel.send('Your answer is wrong. :pensive:')
-												}
-											})
-											.catch(()=> {
-												msg.reply('Looks like you didn\'t finish in time.... (30 seconds)')
-											})
-									})
-									.catch(console.error)
-							})
-						} else if (difficulty == 'normal' && msgid == collected.first().author.id){
-							request({
-								method: 'get',
-								url: mathurl+mathjson[1],
-								json: true
-							}, (err,req,body)=> {
-
-								randomizer = Math.floor(Math.random() * body.length)
-								question = body[randomizer].question
-								answer = body[randomizer].answer
-								msg.channel.send(question)
-									.then(()=>{
-										msg.channel.awaitMessages(m => m.author.id === msgid, {max:1, time:60000, errors: ["time"]})
-											.then((collected2)=> {
-												if (body[randomizer].answer.some(r => collected2.first().content.includes(r))){
-													msg.channel.send("Your answer is correct!!!!!")
-												} else {
-													msg.channel.send('Your answer is wrong. :pensive:')
-												}
-											})
-											.catch(()=> {
-												msg.reply('Looks like you didn\'t finish in time.... (60 seconds)')
-											})
-									})
-									.catch(console.error)
-							})
-						} else if (difficulty == 'hard' && msgid == collected.first().author.id){
-							request({
-								method: 'get',
-								url: '',
-								json: true
-							}, (err,req,body)=> {
-								randomizer = Math.floor(Math.random() * body.length)
-								question = body[randomizer].question
-								answer = body[randomizer].answer
-								msg.channel.send(question)
-									.then(()=> {
-										msg.channel.awaitMessages(m => m.author.id === msgid, {max:1,time:90000,errors:["time"]})
-											.then(collected2=> {
-												if (answer.some(r => collected2.first().content.includes(r))){
-													msg.channel.send("Congratulations. Your answer is")
-													setTimeout(()=> {msg.channel.send("Correct!!! :partying_face:")},2000)
-												} else {
-													msg.channel.send("Congratulations. Your answer is")
-													setTimeout(()=> {msg.channel.send("Wrong!!! :satisfied:")},2000)
-												}
-											})
-											.catch(() => {
-												msg.reply("Looks like you didn't finish in time.... (90 seconds)")
-											})
-									})
-
-							})
-						} else {
-							msg.channel.send(difficulty + ' is not an option.')
-						}
-					})
-					.catch(collected => {
-						msg.channel.send('You didn\'t respond in 10 seconds. :sob:')
-					})
-			})
-	} else if (command == 'd' || command == 'dungeon' || command == 'dung'){
-		const filter = respond => {
-			return respond.author.id === msg.author.id
-		}
-		let cute_name;
-		let name;
-
-		let playercatalevel
-		let playercataxp
-		let playercumulative
-
-		let desirecatalevel
-
-		let desirecataxp
-		let cata50xpleft
-		let playernextlevel
-		let playernextlevelcataxp
-
-		const cumulative = [50,75,110,160,230,330,470,670,950,1340,1890,2665,3760,5260,7380,10300,14400,20000,27600,38000,52500,71500,97000,132000,180000,243000,328000,445000,600000,800000,1065000,1410000,1900000,2500000,3300000,4300000,5600000,7200000,9200000,12000000,15000000,19000000,24000000,30000000,38000000,48000000,60000000,75000000,93000000,116250000]
-		msg.channel.send("What's your IGN?")
-			.then(()=> {
-				msg.channel.awaitMessages(filter, {max:1,time:30000,errors:["time"]})
-					.then(collected => {
-						name = collected.first().content
-						msg.channel.send("What's the profile name or fruit name")
-							.then(()=> {
-								msg.channel.awaitMessages(filter, {max:1,time:30000,errors:["time"]})
-									.then(collected1=> {
-										cute_name = collected1.first().content
-										msg.channel.send('What catacomb level you want to get?')
-											.then(()=> {
-												msg.channel.awaitMessages(filter, {max:1,time:30000, errors:["time"]})
-													.then(collected2 => {
-														request({
-															method: 'get',
-															url: 'https://sky.shiiyu.moe/api/v2/dungeons/'+name+'/'+cute_name,
-															json: true
-														}, (err,req,body)=> {
-
-															if (body.error != undefined){
-																msg.channel.send(body.error)
-																return
-															}
-
-															desirecatalevel = parseInt(collected2.first().content)
-															if (isNaN(desirecatalevel)){
-																msg.channel.send('Desire catalevel is NaN')
-																return
-															} else if (desirecatalevel > 50 || desirecatalevel < 1){
-																msg.channel.send('Only catacomb 1-50')
-																return
-															}
-															playercatalevel = body.dungeons.catacombs.level.level
-															playernextlevel = playercatalevel + 1
-
-															playercataxp = body.dungeons.catacombs.level.xpCurrent
-
-															playercumulative = body.dungeons.catacombs.level.xp
-															
-
-															desirecataxp = cumulative[desirecatalevel-1] - playercumulative
-															cata50xpleft = cumulative[49] - playercumulative
-															playernextlevelcataxp = cumulative[playernextlevel-1] - playercataxp
-
-															if (playercatalevel > desirecatalevel){
-																msg.channel.send('Desire catacombs level can\'t be lower than your catacombs level')
-																return
-															}
-
-															const embed = new discord.MessageEmbed()
-																.setTitle("Hypixel Skyblock Dungeons Calculator")
-																.addFields(
-																	{name: "Catacombs **"+playercatalevel+"** to **"+desirecatalevel+"**", value:desirecataxp.toFixed(2)+ " cata xp needed", inline:true},
-																	{name: "Catacombs **"+playercatalevel+"** to **"+playernextlevel+"**", value:playernextlevelcataxp.toFixed(2)+ " cata xp needed", inline:true},
-																	{name: "Catacombs **"+playercatalevel+"** to **50**", value:cata50xpleft.toFixed(2)+ " cata xp needed",inline:true}
-																	)
-															msg.channel.send(embed)
-														})
-													})
-											})
-									})
-							})
-					})
-			})
-
 	}
 
 	// MY COMMANDS
@@ -961,20 +768,21 @@ client.on('message', msg =>{
 
 		msg.channel.send('You deleted '+c+' message').then(msg => {msg.delete({timeout: 2000})})
 		msg.channel.bulkDelete(num)
-	} else if (command == 'dadjoke' && isOwner(msg)){
-		const option = messages.substr(messages.toLowerCase().indexOf('dadjoke') + 8)
-		if (option == ''){
-			msg.channel.send("You forgot true or false.")
-		}
-		if (option == 'false'){
-			active = false
-			msg.channel.send("dad joke is now FALSE")
+	} else if (command == 'mute'){
+		let muteUser = msg.mentions.members.first()
+		let muterole = msg.guild.roles.cache.get('873272754172997702')
+
+		var timer = 1200000
+		if (msg.member.roles.cache.has(muterole.id)){
+			msg.channel.send('Already muted')
 			return
-		} else if (option == 'true'){
-			active = true
-			msg.channel.send("dad joke is now TRUE")
-			return
+		} else {
+			muteUser.roles.add(muterole)
+			msg.channel.send('Muted')
 		}
+		setTimeout(()=>{
+			muteUser.roles.remove(muterole)
+		}, timer)
 	}
 
 	if (command == 'strict' && isOwner(msg)){
@@ -1008,7 +816,7 @@ client.on('message', msg =>{
 	}
 
 	// SPAM FOR MEE9 rank
-	if (command == 'del'){
+	if (command == 'nicelolwtf'){
 		msg.delete({timeout:250})
 	}
 	if (command == 'dog'){
@@ -1020,35 +828,6 @@ client.on('message', msg =>{
 			msg.channel.send("Woof Woof *Dog noises")
 			msg.channel.send(body.message)
 		})
-	}
-	// dad joke moment
-	let str = msg.content.split(' ')
-	if (msg.content.toLowerCase().startsWith('im') && active){
-
-		// checker
-		for (i in str){
-			if (str[i].toLowerCase() == 'idiot'){
-				return
-			} else if (str[i].toLowerCase() == 'stupid'){
-				return
-			} else if (str[i].toLowerCase() == 'stopid'){
-				return
-			} else if (str[i].toLowerCase() == 'idiut'){
-				return
-			} else if (str[i].toLowerCase() == 'idi-ot'){
-				return
-			} else if (str[i].toLowerCase() == 'i-diot'){
-				return
-			} else if (str[i].toLowerCase() == 'idi-ot'){
-				return
-			} else if (str[i].toLowerCase() == 'retarded'){
-				return
-			} else if (str[i].toLowerCase() == 'retard'){
-				return
-			}
-		}
-
-		msg.channel.send('Hi' +msg.content.slice(2,msg.content.length)+ " Im Kaguya :joy_cat:")
 	}
 	// #count / only count bot can talk / delete user text if not numbers
 	if (msg.channel.name == 'counting'){
@@ -1067,21 +846,19 @@ client.on('message', msg =>{
 let welcomepickedsentence
 let stringforwelcome
 
-client.on('guildMemberAdd', async (member)=> {
-	const channel12 = member.guild.channels.cache.find(channel => channel.name == 'arrivals-and-departures')
+client.on('guildMemberAdd', (member)=> {
 	welcomepickedsentence = welcomearray[Math.floor(Math.random() * 9)]
 	stringforwelcome = welcomepickedsentence.replace("&user&", member)
-	channel12.send(stringforwelcome)
+	 client.channels.cache.get('799181059908567073').send(stringforwelcome)
 })
 
 let farewellpickedsentence
 let stringforfarewell
 
-client.on('guildMemberRemove', async (member)=> {
-	const channel12 = member.guild.channels.cache.find(channel => channel.name == 'arrivals-and-departures')
+client.on('guildMemberRemove', (member)=> {
 	farewellpickedsentence = farewellarray[Math.floor(Math.random() * 3)]
 	stringforfarewell = farewellpickedsentence.replace("&user&", member)
-	channel12.send(stringforfarewell)
+	client.channels.cache.get('799181059908567073').send(stringforfarewell)
 })
 
 client.login(token).catch(console.error)
