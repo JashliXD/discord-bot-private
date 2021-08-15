@@ -2,7 +2,7 @@
 const request = require('request');
 const discord = require('discord.js');
 const intents = ["GUILDS", "GUILD_MEMBERS", "GUILD_MESSAGES"];
-const client = new discord.Client({intents: intents, ws:{intents: intents}});
+const client = new discord.Client({ws: {intents: new discord.Intents(discord.Intents.ALL) }});
 //const dotenv = require('dotenv').config()
 
 let api = process.env.api
