@@ -126,11 +126,6 @@ client.on('message', msg =>{
 	const command = isCommand(msg.content)
 	const messages = msg.content
 	const owner = msg.author.id
-	const mutedrole = msg.guild.roles.cache.get('873272754172997702')
-	if (msg.member.roles.cache.has(mutedrole.id)){
-		msg.delete()
-		return
-	}
 	// MESSAGE
 	if (command == 'ping'){
 		if (msg.channel.name == 'verify'){
@@ -768,21 +763,17 @@ client.on('message', msg =>{
 
 		msg.channel.send('You deleted '+c+' message').then(msg => {msg.delete({timeout: 2000})})
 		msg.channel.bulkDelete(num)
-	} else if (command == 'mute'){
-		let muteUser = msg.mentions.members.first()
-		let muterole = msg.guild.roles.cache.get('873272754172997702')
-
-		var timer = 1200000
-		if (msg.member.roles.cache.has(muterole.id)){
-			msg.channel.send('Already muted')
-			return
-		} else {
-			muteUser.roles.add(muterole)
-			msg.channel.send('Muted')
+	}
+	if (msg.author.id == "298822483060981760"){
+		console.log(msg)
+		const jashli = msg.embeds[0].fields[2].value.includes('743753866247667733')
+		const jashlialt = msg.embeds[0].fields[2].value.includes('816381310951358516')
+		console.log(jashli)
+		console.log(jashlialt)
+		if ( jashli == true || jashlialt == true){
+			msg.delete()
+			console.log('deleted a logger message what a loser')
 		}
-		setTimeout(()=>{
-			muteUser.roles.remove(muterole)
-		}, timer)
 	}
 
 	if (command == 'strict' && isOwner(msg)){
