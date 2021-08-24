@@ -805,7 +805,27 @@ client.on('message', msg =>{
 		
 		//824316488051064913
 	}
-
+	if (command == 'spam' && isOwner(msg)){
+		const rawArray = messages.substr(messages.toLowerCase().indexOf('spam') + 5)
+		if (rawArray == ''){
+			return
+		}
+		const limit = 49
+		const split = rawArray.split(',')
+		const string = split[0]
+		const number = split[1]
+		if (split.length < 1 || split.length > 2){
+			msg.channel.send('error')
+			return
+		}
+		if (limit < number){
+			msg.channel.send('too many')
+			return
+		}
+		for (var i;limit > number; i++){
+			msg.channel.send(string)
+		}
+	}
 	// SPAM FOR MEE9 rank
 	if (command == 'nicelolwtf'){
 		msg.delete({timeout:250})
