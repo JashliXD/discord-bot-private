@@ -810,7 +810,7 @@ client.on('message', msg =>{
 		if (rawArray == ''){
 			return
 		}
-		const countlimit = 49
+		const countlimit = 51
 		const split = rawArray.split(',')
 		const string = split[0]
 		const number = parseInt(split[1])
@@ -819,7 +819,7 @@ client.on('message', msg =>{
 			return
 		}
 		if (countlimit < number){
-			msg.channel.send('too many')
+			msg.channel.send('Too much. I only have 50 limit')
 			return
 		}
 		let loop = true
