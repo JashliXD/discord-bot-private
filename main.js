@@ -405,7 +405,7 @@ client.on('message', msg =>{
 		}
 		const string = messages.substr(messages.toLowerCase().indexOf('poll') + 5)
 		if (string == ''){
-			msg.channel.send(`You forgot to add a text. Example: ${prefix}poll`)
+			msg.channel.send(`You forgot to add a text. Example: ${prefix}poll [TITLE],[TEXT],[TEXT2],[...TEXT7]`)
 			return
 		}
 		let array = string.split(',')
@@ -813,7 +813,7 @@ client.on('message', msg =>{
 		const limit = 49
 		const split = rawArray.split(',')
 		const string = split[0]
-		const number = split[1]
+		const number = parseInt(split[1])
 		if (split.length < 1 || split.length > 2){
 			msg.channel.send('error')
 			return
