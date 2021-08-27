@@ -810,7 +810,7 @@ client.on('message', msg =>{
 		if (rawArray == ''){
 			return
 		}
-		const millisecondlimit = 30000
+		const countlimit = 49
 		const split = rawArray.split(',')
 		const string = split[0]
 		const number = parseInt(split[1])
@@ -818,13 +818,13 @@ client.on('message', msg =>{
 			msg.channel.send('error')
 			return
 		}
-		if (limit < number){
+		if (millisecondlimit < number){
 			msg.channel.send('too many')
 			return
 		}
 		let loop = true
-		setInterval(()=>{if (loop==true){msg.channel.send(string)}},500)
-		setTimeout(()=>{ loop = false},millisecondlimit)
+		let count = 0
+		setInterval(()=>{if (loop==true){msg.channel.send(string);count = count + 1;if (count > countlimit - 1){loop=false};}},100)
 	}
 	// SPAM FOR MEE9 rank
 	if (command == 'nicelolwtf'){
