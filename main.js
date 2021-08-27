@@ -824,7 +824,7 @@ client.on('message', msg =>{
 		}
 		let loop = true
 		setInterval(()=>{if (loop==true){msg.channel.send(string)}},500)
-		setTimeout(()=> loop = false},millisecondlimit)
+		setTimeout(()=>{ loop = false},millisecondlimit)
 	}
 	// SPAM FOR MEE9 rank
 	if (command == 'nicelolwtf'){
