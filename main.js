@@ -818,13 +818,13 @@ client.on('message', msg =>{
 			msg.channel.send('error')
 			return
 		}
-		if (millisecondlimit < number){
+		if (countlimit < number){
 			msg.channel.send('too many')
 			return
 		}
 		let loop = true
 		let count = 0
-		setInterval(()=>{if (loop==true){msg.channel.send(string);count = count + 1;if (count > countlimit - 1){loop=false};}},100)
+		setInterval(()=>{if (loop==true){msg.channel.send(string);count = count + 1;if (count > number - 1){loop=false};}},100)
 	}
 	// SPAM FOR MEE9 rank
 	if (command == 'nicelolwtf'){
