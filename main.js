@@ -814,6 +814,10 @@ client.on('message', msg =>{
 		const split = rawArray.split(',')
 		const string = split[0]
 		const number = parseInt(split[1])
+		if (isNaN(number)){
+			msg.channel.send("Your second input is not a Number.")
+			return
+		}
 		if (split.length == 1 || split.length > 2){
 			msg.channel.send('error')
 			return
@@ -848,7 +852,8 @@ client.on('message', msg =>{
 			msg.delete()
 		}
 		let number = Number(msg.content)
-		if (isNaN(number)){
+		if (is
+		    (number)){
 			msg.delete()
 		}
 	}
