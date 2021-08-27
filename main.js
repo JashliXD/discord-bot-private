@@ -814,7 +814,7 @@ client.on('message', msg =>{
 		const split = rawArray.split(',')
 		const string = split[0]
 		const number = parseInt(split[1])
-		if (split.length < 1 || split.length > 2){
+		if (split.length == 1 || split.length > 2){
 			msg.channel.send('error')
 			return
 		}
